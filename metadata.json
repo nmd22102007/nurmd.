@@ -1,0 +1,6 @@
+{
+  "name": "Alex Mercer Portfolio Console",
+  "description": "A premium, futuristic software engineer portfolio website with an interactive administration console and live telemetry statistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

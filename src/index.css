@@ -1,0 +1,120 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Pliant';
+  src: local('Pliant'), local('Pliant-Regular'), local('Pliant Regular');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Pliant", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Pliant", "Outfit", sans-serif;
+  --font-serif: "Instrument Serif", serif;
+  
+  --color-accent: #ffffff;
+  --color-accent-dim: rgba(255, 255, 255, 0.05);
+  --color-navy-dark: var(--bg-main);
+  --color-navy: var(--bg-navy);
+  --color-slate-950: var(--bg-main);
+  --color-slate-900: var(--bg-navy);
+  --color-slate-800: var(--bg-slate-800-theme);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --bg-main: #09090b;
+    --bg-navy: #18181b;
+    --bg-slate-800-theme: #27272a;
+    --text-main: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.03);
+    --border-glass: rgba(255, 255, 255, 0.06);
+    --bg-glass-dark: rgba(0, 0, 0, 0.6);
+    
+    /* Shadcn variables */
+    --background: #09090b;
+    --foreground: #ffffff;
+    --primary: #ffffff;
+    --primary-foreground: #09090b;
+    --muted: #18181b;
+    --muted-foreground: #a1a1aa;
+    --accent: #ffffff;
+    --accent-foreground: #09090b;
+    --secondary: #52525b;
+    --secondary-foreground: #ffffff;
+    --border: rgba(255, 255, 255, 0.08);
+  }
+
+  :root.light {
+    color-scheme: light;
+    --bg-main: #ffffff;
+    --bg-navy: #f1f5f9;
+    --bg-slate-800-theme: #e2e8f0;
+    --text-main: #020617;
+    --bg-glass: rgba(15, 23, 42, 0.05);
+    --border-glass: rgba(15, 23, 42, 0.1);
+    --bg-glass-dark: rgba(255, 255, 255, 0.8);
+    
+    /* Shadcn variables (light mode) */
+    --background: #ffffff;
+    --foreground: #020617;
+    --primary: #18181b;
+    --primary-foreground: #ffffff;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #18181b;
+    --accent-foreground: #ffffff;
+    --secondary: #71717a;
+    --secondary-foreground: #ffffff;
+    --border: rgba(15, 23, 42, 0.1);
+  }
+  
+  body {
+    @apply font-sans antialiased selection:bg-accent selection:text-navy-dark transition-colors duration-300;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    background-image: 
+      radial-gradient(circle at top right, var(--color-accent-dim), transparent 600px),
+      radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.03), transparent 600px);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tighter;
+  }
+}
+
+.glass {
+  background-color: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  @apply shadow-2xl;
+}
+
+.glass-accent {
+  @apply bg-white/3 backdrop-blur-xl border border-white/10;
+}
+
+.glass-dark {
+  background-color: var(--bg-glass-dark);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border-glass);
+}
+
+.neon-glow {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.grid-overlay {
+  background-image: linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.editorial-text {
+  @apply font-serif italic;
+}
+
