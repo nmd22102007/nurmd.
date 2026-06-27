@@ -91,11 +91,32 @@ export const Login = () => {
       console.error('Google login error:', err);
       if (err.code === 'auth/operation-not-allowed') {
         setError(
-          <div className="space-y-2">
-            <p className="font-bold">Authentication failed: Google provider is not enabled.</p>
-            <p className="text-xs text-red-300">
-              Go to your <strong>Firebase Console &gt; Authentication &gt; Sign-in method</strong>, add/enable <strong>Google</strong> provider, and click Save. Also check authorized domains context.
+          <div className="space-y-2 text-left">
+            <p className="font-bold text-red-400">Authentication failed: Google provider is not enabled.</p>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              Go to your <strong>Firebase Console &gt; Authentication &gt; Sign-in method</strong>, add/enable <strong>Google</strong> provider, and click Save.
             </p>
+          </div>
+        );
+      } else if (err.code === 'auth/unauthorized-domain') {
+        const currentDomain = window.location.hostname;
+        const projectId = auth.app.options.projectId || 'nurmd-top';
+        setError(
+          <div className="space-y-3 text-left">
+            <p className="font-bold text-red-400">Unauthorized Domain Error (auth/unauthorized-domain)</p>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              This domain (<strong>{currentDomain}</strong>) is not authorized in your Firebase project for authentication.
+            </p>
+            <div className="text-xs bg-black/40 p-4 rounded-xl border border-white/5 font-mono space-y-2 mt-2 leading-relaxed text-slate-300">
+              <p className="font-bold text-accent uppercase tracking-wider text-[10px] mb-1">To fix this in 30 seconds:</p>
+              <ol className="list-decimal pl-4 space-y-1.5 text-[11px]">
+                <li>Go to the <a href={`https://console.firebase.google.com/project/${projectId}/authentication/providers`} target="_blank" rel="noopener noreferrer" className="underline text-accent hover:text-white font-bold">Firebase Console</a></li>
+                <li>Navigate to <strong>Authentication &gt; Settings &gt; Authorized domains</strong></li>
+                <li>Click <strong>Add domain</strong></li>
+                <li>Paste your active domain: <code className="bg-white/10 px-1.5 py-0.5 rounded text-white font-semibold break-all">{currentDomain}</code></li>
+                <li>Click <strong>Add</strong> and try logging in again!</li>
+              </ol>
+            </div>
           </div>
         );
       } else {

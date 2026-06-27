@@ -1,10 +1,11 @@
 {
-  "apiKey": "placeholder-api-key",
-  "authDomain": "placeholder-app.firebaseapp.com",
-  "projectId": "placeholder-project-id",
-  "storageBucket": "placeholder-app.appspot.com",
-  "messagingSenderId": "123456789",
-  "appId": "1:123456789:web:abcdef123456789",
-  "measurementId": "G-PLACEHOLDER",
-  "firestoreDatabaseId": "(default)"
+  "apiKey": "AIzaSyBhnflxo8MLE3n_HQ0gVnzYLSv6IHq9Cc4",
+  "authDomain": "nurmd-top.firebaseapp.com",
+  "projectId": "nurmd-top",
+  "storageBucket": "nurmd-top.firebasestorage.app",
+  "messagingSenderId": "802396093631",
+  "appId": "1:802396093631:web:3a417c917508ac2953da0a",
+  "measurementId": "G-L9NDPWSD6Q",
+  "firestoreDatabaseId": "(default)",
+  "databaseURL": "https://nurmd-top-default-rtdb.firebaseio.com"
 }
