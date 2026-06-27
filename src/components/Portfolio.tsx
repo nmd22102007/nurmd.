@@ -71,17 +71,17 @@ export const Portfolio = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
         >
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {loading ? (
+              Array.from({ length: 3 }).map((_, idx) => (
+                <ProjectCardSkeleton key={`skeleton-${idx}`} />
+              ))
+            ) : (
+              filteredProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            )}
           </AnimatePresence>
         </motion.div>
-
-        {loading && (
-          <div className="flex justify-center mt-12">
-            <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
 
         {!loading && filteredProjects.length === 0 && (
           <div className="text-center py-24 glass rounded-3xl">
@@ -92,6 +92,24 @@ export const Portfolio = () => {
     </section>
   );
 };
+
+const ProjectCardSkeleton = () => (
+  <div className="glass rounded-[40px] overflow-hidden animate-pulse border border-white/5">
+    <div className="aspect-[16/10] bg-white/[0.03]" />
+    <div className="p-8 space-y-4">
+      <div className="flex justify-between items-center">
+        <div className="h-3 w-20 bg-white/[0.04] rounded" />
+        <div className="h-4 w-4 bg-white/[0.04] rounded-full" />
+      </div>
+      <div className="h-6 w-3/4 bg-white/[0.05] rounded-lg animate-pulse" />
+      <div className="space-y-2">
+        <div className="h-3 w-full bg-white/[0.03] rounded" />
+        <div className="h-3 w-5/6 bg-white/[0.03] rounded" />
+      </div>
+      <div className="h-3 w-24 bg-white/[0.04] rounded pt-2" />
+    </div>
+  </div>
+);
 
 const ProjectCard = ({ project }: { project: any }) => (
   <motion.div
@@ -107,6 +125,9 @@ const ProjectCard = ({ project }: { project: any }) => (
         src={project.imageUrl} 
         alt={project.title} 
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
       />
     </div>
     

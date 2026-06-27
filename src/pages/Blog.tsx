@@ -184,9 +184,27 @@ export const Blog = () => {
       <section className="py-24 px-6 bg-navy-dark/30">
         <div className="max-w-7xl mx-auto">
           {loading ? (
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="aspect-[4/5] glass rounded-[40px] animate-pulse" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="glass rounded-[40px] overflow-hidden flex flex-col animate-pulse border border-white/5">
+                  <div className="aspect-[16/10] bg-white/[0.03]" />
+                  <div className="p-8 space-y-5 flex-grow">
+                    <div className="flex space-x-4 items-center">
+                      <div className="h-3 w-16 bg-white/[0.04] rounded" />
+                      <div className="h-1.5 w-1.5 bg-white/[0.04] rounded-full" />
+                      <div className="h-3 w-12 bg-white/[0.04] rounded" />
+                    </div>
+                    <div className="h-6 w-5/6 bg-white/[0.05] rounded-lg animate-pulse" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-full bg-white/[0.03] rounded" />
+                      <div className="h-3 w-5/6 bg-white/[0.03] rounded" />
+                    </div>
+                    <div className="pt-8 border-t border-white/5 flex items-center justify-between mt-auto">
+                      <div className="h-3 w-28 bg-white/[0.04] rounded" />
+                      <div className="h-10 w-10 bg-white/[0.03] rounded-full" />
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
@@ -211,6 +229,9 @@ export const Blog = () => {
                           src={post.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80'} 
                           alt={post.title} 
                           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                          loading="lazy"
+                          decoding="async"
+                          referrerPolicy="no-referrer"
                         />
                         <div className="absolute inset-0 bg-navy-dark/20 group-hover:bg-navy-dark/0 transition-colors" />
                         <div className="absolute top-6 left-6">

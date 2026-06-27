@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -18,6 +18,7 @@ import Demo from './pages/Demo';
 import { useAuth } from './context/AuthContext';
 import { db } from './lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { Preloader } from './components/Preloader';
 
 const ProtectedRoute = ({ children, adminOnly = false }: { children: React.ReactNode, adminOnly?: boolean }) => {
   const { user, loading, isAdmin } = useAuth();
@@ -65,6 +66,10 @@ const applyTheme = (theme: any) => {
 };
 
 function App() {
+  const [isPreloading, setIsPreloading] = useState(() => {
+    return sessionStorage.getItem('has_preloaded') !== 'true';
+  });
+
   useEffect(() => {
     // Apply cached theme immediately to prevent flashing
     const cachedThemeStr = localStorage.getItem('siteConfig_theme');
@@ -88,6 +93,15 @@ function App() {
 
     return () => unsubscribe();
   }, []);
+
+  const handlePreloadComplete = () => {
+    setIsPreloading(false);
+    sessionStorage.setItem('has_preloaded', 'true');
+  };
+
+  if (isPreloading) {
+    return <Preloader onComplete={handlePreloadComplete} />;
+  }
 
   return (
     <Routes>
