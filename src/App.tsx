@@ -34,39 +34,55 @@ const ProtectedRoute = ({ children, adminOnly = false }: { children: React.React
   return <>{children}</>;
 };
 
+const applyTheme = (theme: any) => {
+  const root = document.documentElement;
+  if (theme.background) {
+    root.style.setProperty('--background', theme.background);
+    root.style.setProperty('--bg-main', theme.background);
+  }
+  if (theme.primary) {
+    root.style.setProperty('--primary', theme.primary);
+  }
+  if (theme.accent) {
+    root.style.setProperty('--color-accent', theme.accent);
+    root.style.setProperty('--accent', theme.accent);
+    root.style.setProperty('--color-accent-dim', theme.accent + '15');
+  }
+  if (theme.secondary) {
+    root.style.setProperty('--secondary', theme.secondary);
+  }
+  if (theme.foreground) {
+    root.style.setProperty('--foreground', theme.foreground);
+    root.style.setProperty('--text-main', theme.foreground);
+  }
+  if (theme.background && theme.background !== '#020617' && theme.background !== '#09090b') {
+    root.style.setProperty('--bg-navy', theme.background + 'e0');
+  } else if (theme.background === '#09090b') {
+    root.style.setProperty('--bg-navy', '#18181b');
+  } else {
+    root.style.setProperty('--bg-navy', '#18181b');
+  }
+};
+
 function App() {
   useEffect(() => {
+    // Apply cached theme immediately to prevent flashing
+    const cachedThemeStr = localStorage.getItem('siteConfig_theme');
+    if (cachedThemeStr) {
+      try {
+        const theme = JSON.parse(cachedThemeStr);
+        applyTheme(theme);
+      } catch (e) {
+        console.error("Error applying cached theme:", e);
+      }
+    }
+
     const docRef = doc(db, 'siteConfig', 'theme');
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
         const theme = snapshot.data();
-        const root = document.documentElement;
-        if (theme.background) {
-          root.style.setProperty('--background', theme.background);
-          root.style.setProperty('--bg-main', theme.background);
-        }
-        if (theme.primary) {
-          root.style.setProperty('--primary', theme.primary);
-        }
-        if (theme.accent) {
-          root.style.setProperty('--color-accent', theme.accent);
-          root.style.setProperty('--accent', theme.accent);
-          root.style.setProperty('--color-accent-dim', theme.accent + '15');
-        }
-        if (theme.secondary) {
-          root.style.setProperty('--secondary', theme.secondary);
-        }
-        if (theme.foreground) {
-          root.style.setProperty('--foreground', theme.foreground);
-          root.style.setProperty('--text-main', theme.foreground);
-        }
-        if (theme.background && theme.background !== '#020617' && theme.background !== '#09090b') {
-          root.style.setProperty('--bg-navy', theme.background + 'e0');
-        } else if (theme.background === '#09090b') {
-          root.style.setProperty('--bg-navy', '#18181b');
-        } else {
-          root.style.setProperty('--bg-navy', '#18181b');
-        }
+        applyTheme(theme);
+        localStorage.setItem('siteConfig_theme', JSON.stringify(theme));
       }
     });
 

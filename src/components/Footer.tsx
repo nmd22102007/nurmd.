@@ -37,14 +37,39 @@ const defaultFooterData: FooterData = {
 };
 
 export const Footer = () => {
-  const [data, setData] = useState<FooterData>(defaultFooterData);
+  const [data, setData] = useState<FooterData>(() => {
+    const cached = localStorage.getItem('siteConfig_footer');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        return {
+          connectTitleMain: parsed.connectTitleMain || defaultFooterData.connectTitleMain,
+          connectTitleSpan: parsed.connectTitleSpan || defaultFooterData.connectTitleSpan,
+          description: parsed.description || defaultFooterData.description,
+          playgroundText: parsed.playgroundText || defaultFooterData.playgroundText,
+          email: parsed.email || defaultFooterData.email,
+          location: parsed.location || defaultFooterData.location,
+          logoText: parsed.logoText || defaultFooterData.logoText,
+          statusLabel: parsed.statusLabel || defaultFooterData.statusLabel,
+          statusText: parsed.statusText || defaultFooterData.statusText,
+          copyright: parsed.copyright || defaultFooterData.copyright,
+          twitterUrl: parsed.twitterUrl || defaultFooterData.twitterUrl,
+          githubUrl: parsed.githubUrl || defaultFooterData.githubUrl,
+          linkedinUrl: parsed.linkedinUrl || defaultFooterData.linkedinUrl,
+        };
+      } catch (e) {
+        console.error("Error loading cached footer data:", e);
+      }
+    }
+    return defaultFooterData;
+  });
 
   useEffect(() => {
     const docRef = doc(db, 'siteConfig', 'footer');
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
         const fbData = snapshot.data();
-        setData({
+        const updatedFooter = {
           connectTitleMain: fbData.connectTitleMain || defaultFooterData.connectTitleMain,
           connectTitleSpan: fbData.connectTitleSpan || defaultFooterData.connectTitleSpan,
           description: fbData.description || defaultFooterData.description,
@@ -58,7 +83,9 @@ export const Footer = () => {
           twitterUrl: fbData.twitterUrl || defaultFooterData.twitterUrl,
           githubUrl: fbData.githubUrl || defaultFooterData.githubUrl,
           linkedinUrl: fbData.linkedinUrl || defaultFooterData.linkedinUrl,
-        });
+        };
+        setData(updatedFooter);
+        localStorage.setItem('siteConfig_footer', JSON.stringify(updatedFooter));
       }
     }, (error) => {
       console.error("Error subscribing to footer configuration:", error);

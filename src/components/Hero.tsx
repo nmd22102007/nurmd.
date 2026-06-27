@@ -124,7 +124,17 @@ const statsVariants: Variants = {
 };
 
 export const Hero = () => {
-  const [heroData, setHeroData] = useState<HeroData>(DEFAULT_HERO_DATA);
+  const [heroData, setHeroData] = useState<HeroData>(() => {
+    const cached = localStorage.getItem('siteConfig_hero');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error("Error loading cached hero config:", e);
+      }
+    }
+    return DEFAULT_HERO_DATA;
+  });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
   const targetMouseRef = useRef<Point>({ x: 0, y: 0 });
@@ -137,7 +147,7 @@ export const Hero = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setHeroData({
+          const updatedHeroData = {
             badge: data.badge || DEFAULT_HERO_DATA.badge,
             title: data.title || DEFAULT_HERO_DATA.title,
             titleAccent: data.titleAccent !== undefined ? data.titleAccent : DEFAULT_HERO_DATA.titleAccent,
@@ -149,7 +159,9 @@ export const Hero = () => {
             imageUrl: data.imageUrl !== undefined ? data.imageUrl : DEFAULT_HERO_DATA.imageUrl,
             highlightPills: Array.isArray(data.highlightPills) ? data.highlightPills : DEFAULT_HERO_DATA.highlightPills,
             stats: Array.isArray(data.stats) ? data.stats : DEFAULT_HERO_DATA.stats,
-          });
+          };
+          setHeroData(updatedHeroData);
+          localStorage.setItem('siteConfig_hero', JSON.stringify(updatedHeroData));
         } else {
           // Backward compatibility check with siteConfig/about
           const aboutRef = doc(db, 'siteConfig', 'about');
@@ -157,11 +169,15 @@ export const Hero = () => {
           if (aboutSnap.exists()) {
             const aboutData = aboutSnap.data();
             if (aboutData.title) {
-              setHeroData(prev => ({
-                ...prev,
-                title: aboutData.title,
-                description: aboutData.subtitle || prev.description
-              }));
+              setHeroData(prev => {
+                const updated = {
+                  ...prev,
+                  title: aboutData.title,
+                  description: aboutData.subtitle || prev.description
+                };
+                localStorage.setItem('siteConfig_hero', JSON.stringify(updated));
+                return updated;
+              });
             }
           }
         }

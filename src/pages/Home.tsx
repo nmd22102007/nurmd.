@@ -54,13 +54,25 @@ const AnimatedCounter = ({ value }: { value: string }) => {
 };
 
 const Home = () => {
-  const [aboutData, setAboutData] = useState<any>(null);
+  const [aboutData, setAboutData] = useState<any>(() => {
+    const cached = localStorage.getItem('siteConfig_about');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error("Error loading cached about data on Home page:", e);
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     const docRef = doc(db, 'siteConfig', 'about');
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
-        setAboutData(snapshot.data());
+        const data = snapshot.data();
+        setAboutData(data);
+        localStorage.setItem('siteConfig_about', JSON.stringify(data));
       }
     }, (err) => {
       console.error("Error loading home page about section:", err);
@@ -83,6 +95,8 @@ const Home = () => {
                 alt="MD - Web Designer" 
                 className="w-full h-full object-cover -rotate-3 hover:rotate-0 transition-transform duration-500"
                 referrerPolicy="no-referrer"
+                loading="eager"
+                decoding="async"
               />
             </div>
             {/* Experience Badge */}

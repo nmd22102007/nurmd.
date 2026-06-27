@@ -12,7 +12,17 @@ export const Contact = () => {
     message: ''
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [contactInfo, setContactInfo] = useState<{email: string, phone: string, location: string} | null>(null);
+  const [contactInfo, setContactInfo] = useState<{email: string, phone: string, location: string} | null>(() => {
+    const cached = localStorage.getItem('siteConfig_contact');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error("Error loading cached contact data:", e);
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     const loadContact = async () => {
@@ -20,7 +30,9 @@ export const Contact = () => {
         const docRef = doc(db, 'siteConfig', 'contact');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setContactInfo(docSnap.data() as {email: string, phone: string, location: string});
+          const loadedData = docSnap.data() as {email: string, phone: string, location: string};
+          setContactInfo(loadedData);
+          localStorage.setItem('siteConfig_contact', JSON.stringify(loadedData));
         }
       } catch (e) {
         console.error("Error loading contact section:", e);

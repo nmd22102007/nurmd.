@@ -133,7 +133,36 @@ const AnimatedCounter = ({ value }: { value: string }) => {
 };
 
 export const About = () => {
-  const [aboutData, setAboutData] = useState<AboutData>(defaultData);
+  const [aboutData, setAboutData] = useState<AboutData>(() => {
+    const cached = localStorage.getItem('siteConfig_about');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        return {
+          title: parsed.title || defaultData.title,
+          subtitle: parsed.subtitle || defaultData.subtitle,
+          imageUrl: parsed.imageUrl || defaultData.imageUrl,
+          heading: parsed.heading || defaultData.heading,
+          description1: parsed.description1 || defaultData.description1,
+          description2: parsed.description2 || defaultData.description2,
+          statistics: Array.isArray(parsed.statistics) ? parsed.statistics : defaultData.statistics,
+          skills: Array.isArray(parsed.skills) ? parsed.skills : defaultData.skills,
+          timeline: Array.isArray(parsed.timeline) ? parsed.timeline : defaultData.timeline,
+          addressMain: parsed.addressMain || defaultData.addressMain,
+          addressSub: parsed.addressSub || defaultData.addressSub,
+          emailText: parsed.emailText || defaultData.emailText,
+          phone1: parsed.phone1 || defaultData.phone1,
+          phone2: parsed.phone2 || defaultData.phone2,
+          ctaHeadline: parsed.ctaHeadline || defaultData.ctaHeadline,
+          ctaButtonText: parsed.ctaButtonText || defaultData.ctaButtonText,
+          ctaButtonUrl: parsed.ctaButtonUrl || defaultData.ctaButtonUrl,
+        };
+      } catch (e) {
+        console.error("Error loading cached about data:", e);
+      }
+    }
+    return defaultData;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -141,7 +170,7 @@ export const About = () => {
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
-        setAboutData({
+        const updatedData = {
           title: data.title || defaultData.title,
           subtitle: data.subtitle || defaultData.subtitle,
           imageUrl: data.imageUrl || defaultData.imageUrl,
@@ -159,7 +188,9 @@ export const About = () => {
           ctaHeadline: data.ctaHeadline || defaultData.ctaHeadline,
           ctaButtonText: data.ctaButtonText || defaultData.ctaButtonText,
           ctaButtonUrl: data.ctaButtonUrl || defaultData.ctaButtonUrl,
-        });
+        };
+        setAboutData(updatedData);
+        localStorage.setItem('siteConfig_about', JSON.stringify(updatedData));
       }
       setLoading(false);
     }, (error) => {
@@ -225,6 +256,8 @@ export const About = () => {
                 alt="Portrait presentation" 
                 className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                 referrerPolicy="no-referrer"
+                loading="eager"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 pointer-events-none" />
             </div>
