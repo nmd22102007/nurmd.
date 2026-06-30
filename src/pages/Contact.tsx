@@ -21,6 +21,21 @@ import {
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
+const DiscordIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+    <path d="M15 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+    <path d="M19.4 6a17.2 17.2 0 0 0-4.1-1.3c-.2.4-.4.8-.5 1.2-1.5-.2-2.9-.2-4.4 0-.1-.4-.3-.8-.5-1.2-1.4.3-2.8.8-4.1 1.3A17.9 17.9 0 0 0 2 17.5c1.6 1.2 3.1 1.9 4.6 2.4.4-.5.8-1 1.1-1.5-1-.4-2-.9-2.9-1.5.3-.2.6-.4.9-.6 3 1.4 6.2 1.4 9.2 0 .3.2.6.4.9.6-.9.6-1.9 1.1-2.9 1.5.3.5.7 1 1.1 1.5 1.5-.5 3-1.2 4.6-2.4a17.9 17.9 0 0 0-3.8-11.5z" />
+  </svg>
+);
+
+const XIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+    <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+  </svg>
+);
+
 interface SocialLinkItem {
   name: string;
   iconName: string;
@@ -32,7 +47,7 @@ const DEFAULT_SOCIAL_LINKS: SocialLinkItem[] = [
   { name: 'WhatsApp', iconName: 'MessageCircle', href: '#', label: 'Direct Chat' },
   { name: 'Facebook', iconName: 'Facebook', href: '#', label: 'Follow' },
   { name: 'GitHub', iconName: 'Github', href: '#', label: 'Code' },
-  { name: 'Discord', iconName: 'Hash', href: '#', label: 'Community' },
+  { name: 'Discord', iconName: 'Discord', href: '#', label: 'Community' },
   { name: 'LinkedIn', iconName: 'Linkedin', href: '#', label: 'Connect' },
   { name: 'Live Chat', iconName: 'MessageSquare', href: '#', label: 'Support' },
 ];
@@ -337,7 +352,12 @@ export const Contact = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {contactData.socialLinks.map((link, index) => {
-              const IconComponent = (Icons as any)[link.iconName] || Globe;
+              let IconComponent = (Icons as any)[link.iconName] || Globe;
+              if (link.iconName === 'Discord' || link.name.toLowerCase() === 'discord') {
+                IconComponent = DiscordIcon;
+              } else if (link.iconName === 'X' || link.name.toLowerCase() === 'x' || link.iconName === 'Twitter' || link.name.toLowerCase() === 'twitter') {
+                IconComponent = XIcon;
+              }
               return (
                 <motion.a
                   key={link.name + index}
