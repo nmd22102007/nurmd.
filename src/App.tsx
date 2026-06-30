@@ -19,7 +19,6 @@ import Demo from './pages/Demo';
 import { useAuth } from './context/AuthContext';
 import { db } from './lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { Preloader } from './components/Preloader';
 
 function RouteManager() {
   const { pathname } = useLocation();
@@ -114,10 +113,6 @@ const applyTheme = (theme: any) => {
 };
 
 function App() {
-  const [isPreloading, setIsPreloading] = useState(() => {
-    return sessionStorage.getItem('has_preloaded') !== 'true';
-  });
-
   useEffect(() => {
     // Apply cached theme immediately to prevent flashing
     const cachedThemeStr = localStorage.getItem('siteConfig_theme');
@@ -141,15 +136,6 @@ function App() {
 
     return () => unsubscribe();
   }, []);
-
-  const handlePreloadComplete = () => {
-    setIsPreloading(false);
-    sessionStorage.setItem('has_preloaded', 'true');
-  };
-
-  if (isPreloading) {
-    return <Preloader onComplete={handlePreloadComplete} />;
-  }
 
   return (
     <>
