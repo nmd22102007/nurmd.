@@ -689,7 +689,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
   };
 
   return (
-    <Layout hideNavbar={true}>
+    <Layout hideNavbar={true} hideFooter={true}>
       <div className="min-h-screen bg-[#0B0B0F] text-white font-sans relative overflow-hidden pb-20">
         
         {/* Animated Background Glowing Accents */}

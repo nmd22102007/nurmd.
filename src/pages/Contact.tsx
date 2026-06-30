@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
+import * as Icons from 'lucide-react';
 import { 
   Mail, 
   Phone, 
@@ -17,14 +18,23 @@ import {
   Sparkles,
   Globe
 } from 'lucide-react';
+import { db } from '../lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 
-const socialLinks = [
-  { name: 'WhatsApp', icon: <MessageCircle className="w-5 h-5" />, href: '#', label: 'Direct Chat' },
-  { name: 'Facebook', icon: <Facebook className="w-5 h-5" />, href: '#', label: 'Follow' },
-  { name: 'GitHub', icon: <Github className="w-5 h-5" />, href: '#', label: 'Code' },
-  { name: 'Discord', icon: <Hash className="w-5 h-5" />, href: '#', label: 'Community' },
-  { name: 'LinkedIn', icon: <Linkedin className="w-5 h-5" />, href: '#', label: 'Connect' },
-  { name: 'Live Chat', icon: <MessageSquare className="w-5 h-5" />, href: '#', label: 'Support' },
+interface SocialLinkItem {
+  name: string;
+  iconName: string;
+  href: string;
+  label: string;
+}
+
+const DEFAULT_SOCIAL_LINKS: SocialLinkItem[] = [
+  { name: 'WhatsApp', iconName: 'MessageCircle', href: '#', label: 'Direct Chat' },
+  { name: 'Facebook', iconName: 'Facebook', href: '#', label: 'Follow' },
+  { name: 'GitHub', iconName: 'Github', href: '#', label: 'Code' },
+  { name: 'Discord', iconName: 'Hash', href: '#', label: 'Community' },
+  { name: 'LinkedIn', iconName: 'Linkedin', href: '#', label: 'Connect' },
+  { name: 'Live Chat', iconName: 'MessageSquare', href: '#', label: 'Support' },
 ];
 
 export const Contact = () => {
@@ -36,6 +46,56 @@ export const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  const [contactData, setContactData] = useState<{
+    email: string;
+    phone: string;
+    whatsapp: string;
+    location: string;
+    socialLinks: SocialLinkItem[];
+  }>(() => {
+    const cached = localStorage.getItem('siteConfig_contact');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        return {
+          email: parsed.email || 'nurmd.dev@gmail.com',
+          phone: parsed.phone || '+880 1700-000000',
+          whatsapp: parsed.whatsapp || '+880 1700-000000',
+          location: parsed.location || 'Dhaka, Bangladesh',
+          socialLinks: Array.isArray(parsed.socialLinks) ? parsed.socialLinks : DEFAULT_SOCIAL_LINKS
+        };
+      } catch (e) {
+        console.error("Error loading cached contact data:", e);
+      }
+    }
+    return {
+      email: 'nurmd.dev@gmail.com',
+      phone: '+880 1700-000000',
+      whatsapp: '+880 1700-000000',
+      location: 'Dhaka, Bangladesh',
+      socialLinks: DEFAULT_SOCIAL_LINKS
+    };
+  });
+
+  useEffect(() => {
+    const docRef = doc(db, 'siteConfig', 'contact');
+    const unsubscribe = onSnapshot(docRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        const updatedData = {
+          email: data.email || 'nurmd.dev@gmail.com',
+          phone: data.phone || '+880 1700-000000',
+          whatsapp: data.whatsapp || '+880 1700-000000',
+          location: data.location || 'Dhaka, Bangladesh',
+          socialLinks: Array.isArray(data.socialLinks) ? data.socialLinks : DEFAULT_SOCIAL_LINKS
+        };
+        setContactData(updatedData);
+        localStorage.setItem('siteConfig_contact', JSON.stringify(updatedData));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +187,7 @@ export const Contact = () => {
                       </div>
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Public Email</p>
-                        <a href="mailto:nurmd.dev@gmail.com" className="text-lg font-bold text-white hover:text-accent transition-colors">nurmd.dev@gmail.com</a>
+                        <a href={`mailto:${contactData.email}`} className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.email}</a>
                       </div>
                     </div>
 
@@ -137,7 +197,17 @@ export const Contact = () => {
                       </div>
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Direct Phone</p>
-                        <a href="tel:+8801700000000" className="text-lg font-bold text-white hover:text-accent transition-colors">+880 1700-000000</a>
+                        <a href={`tel:${contactData.phone.replace(/[^0-9+]/g, '')}`} className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.phone}</a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-6 group/item">
+                      <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
+                        <MessageCircle className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">WhatsApp</p>
+                        <a href={`https://wa.me/${contactData.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.whatsapp}</a>
                       </div>
                     </div>
 
@@ -147,7 +217,7 @@ export const Contact = () => {
                       </div>
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Location</p>
-                        <p className="text-lg font-bold text-white">Dhaka, Bangladesh</p>
+                        <p className="text-lg font-bold text-white">{contactData.location}</p>
                       </div>
                     </div>
                   </div>
@@ -266,27 +336,32 @@ export const Contact = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {socialLinks.map((link, index) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="group glass p-8 rounded-[32px] text-center hover:border-accent/40 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative"
-              >
-                <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-accent/5 rounded-full blur-xl group-hover:bg-accent/10 transition-colors" />
-                
-                <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:text-accent group-hover:scale-110 transition-all">
-                  {link.icon}
-                </div>
-                <h4 className="text-md font-bold text-white mb-1">{link.name}</h4>
-                <p className="text-[8px] font-black uppercase tracking-widest text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {link.label}
-                </p>
-              </motion.a>
-            ))}
+            {contactData.socialLinks.map((link, index) => {
+              const IconComponent = (Icons as any)[link.iconName] || Globe;
+              return (
+                <motion.a
+                  key={link.name + index}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group glass p-8 rounded-[32px] text-center hover:border-accent/40 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative"
+                >
+                  <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-accent/5 rounded-full blur-xl group-hover:bg-accent/10 transition-colors" />
+                  
+                  <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:text-accent group-hover:scale-110 transition-all">
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-md font-bold text-white mb-1">{link.name}</h4>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {link.label}
+                  </p>
+                </motion.a>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -326,8 +401,8 @@ export const Contact = () => {
                     <Globe className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-white">Based in Bangladesh</h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Dhaka City (GMT+6)</p>
+                    <h3 className="text-xl font-black text-white">Based in {contactData.location.split(',').pop()?.trim() || 'Bangladesh'}</h3>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{contactData.location}</p>
                   </div>
                 </div>
                 <p className="text-slate-400 text-sm max-w-[250px] leading-relaxed">
