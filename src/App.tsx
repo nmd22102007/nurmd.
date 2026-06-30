@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
 import ServicesPage from './pages/Services';
@@ -20,6 +20,53 @@ import { useAuth } from './context/AuthContext';
 import { db } from './lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Preloader } from './components/Preloader';
+
+function RouteManager() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    let title = 'nurmd.';
+    if (pathname === '/') {
+      title = 'nurmd. | Home';
+    } else if (pathname === '/about') {
+      title = 'nurmd. | About';
+    } else if (pathname === '/services') {
+      title = 'nurmd. | Services';
+    } else if (pathname === '/experience') {
+      title = 'nurmd. | Experience';
+    } else if (pathname === '/tools') {
+      title = 'nurmd. | Tools';
+    } else if (pathname === '/portfolio') {
+      title = 'nurmd. | Portfolio';
+    } else if (pathname === '/contact') {
+      title = 'nurmd. | Contact';
+    } else if (pathname === '/blog') {
+      title = 'nurmd. | Blog';
+    } else if (pathname.startsWith('/blog/')) {
+      title = 'nurmd. | Blog Post';
+    } else if (pathname.startsWith('/project/')) {
+      title = 'nurmd. | Project';
+    } else if (pathname === '/login') {
+      title = 'nurmd. | Login';
+    } else if (pathname === '/register') {
+      title = 'nurmd. | Register';
+    } else if (pathname === '/verify-email') {
+      title = 'nurmd. | Verify Email';
+    } else if (pathname.startsWith('/admin')) {
+      title = 'nurmd. | Admin';
+    } else if (pathname === '/profile') {
+      title = 'nurmd. | Profile';
+    } else if (pathname === '/demo') {
+      title = 'nurmd. | Demo';
+    }
+
+    document.title = title;
+  }, [pathname]);
+
+  return null;
+}
 
 const ProtectedRoute = ({ children, adminOnly = false }: { children: React.ReactNode, adminOnly?: boolean }) => {
   const { user, loading, isAdmin } = useAuth();
@@ -105,8 +152,10 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
+    <>
+      <RouteManager />
+      <Routes>
+        <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/experience" element={<ExperiencePage />} />
@@ -140,7 +189,8 @@ function App() {
           </ProtectedRoute>
         } 
       />
-    </Routes>
+      </Routes>
+    </>
   );
 }
 
