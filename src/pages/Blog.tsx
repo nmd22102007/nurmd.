@@ -19,6 +19,9 @@ import {
 import { categories, mockBlogPosts } from '../constants/blog';
 
 export const Blog = () => {
+    useEffect(() => {
+    document.title = "nurmd. | Blog";
+  }, []);
   const [posts, setPosts] = useState<any[]>(mockBlogPosts);
 
   const [loading, setLoading] = useState(true);

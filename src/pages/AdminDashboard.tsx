@@ -108,6 +108,9 @@ const sampleLatestProjects = [
 ];
 
 export const AdminDashboard = () => {
+    useEffect(() => {
+    document.title = "nurmd. | AdminDashboard";
+  }, []);
   const { user, profile } = useAuth();
   
   // Custom states matching the "WHOAMI" interactive layout
