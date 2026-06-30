@@ -29,7 +29,7 @@ function RouteManager() {
 
     let title = 'nurmd.';
     if (pathname === '/') {
-      title = 'nurmd. | Home';
+      title = 'nurmd. | Web Designer & Developer';
     } else if (pathname === '/about') {
       title = 'nurmd. | About';
     } else if (pathname === '/services') {
