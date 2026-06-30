@@ -87,14 +87,19 @@ const Home = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="relative">
             <div className="aspect-square glass rounded-[60px] overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-              <img 
-                src={aboutData?.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"} 
-                alt="MD - Web Designer" 
-                className="w-full h-full object-cover -rotate-3 hover:rotate-0 transition-transform duration-500"
-                referrerPolicy="no-referrer"
-                loading="eager"
-                decoding="async"
-              />
+                <img 
+                  src={aboutData?.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"} 
+                  alt="MD - Web Designer" 
+                  className="w-full h-full object-cover -rotate-3 hover:rotate-0 transition-transform duration-500"
+                  referrerPolicy="no-referrer"
+                  loading="eager"
+                  decoding="async"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; // Prevent infinite loop
+                    target.src = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80";
+                  }}
+                />
             </div>
             {/* Experience Badge */}
             <div className="absolute -bottom-10 -right-10 glass p-8 rounded-3xl -rotate-6 hidden md:block border border-white/5 shadow-2x">

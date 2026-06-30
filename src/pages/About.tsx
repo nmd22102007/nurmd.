@@ -251,14 +251,19 @@ export const About = () => {
             <div className="absolute inset-0 bg-accent/5 rounded-[48px] blur-3xl opacity-30 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none" />
             
             <div className="relative aspect-[4/5] rounded-[48px] overflow-hidden border border-border hover:border-accent/40 transition-all duration-700 shadow-[0_30px_100px_rgba(0,0,0,0.6)]">
-              <img 
-                src={aboutData.imageUrl} 
-                alt="Portrait presentation" 
-                className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                referrerPolicy="no-referrer"
-                loading="eager"
-                decoding="async"
-              />
+                <img 
+                  src={aboutData.imageUrl} 
+                  alt="Portrait presentation" 
+                  className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                  loading="eager"
+                  decoding="async"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; // Prevent infinite loop
+                    target.src = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80";
+                  }}
+                />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 pointer-events-none" />
             </div>
             
