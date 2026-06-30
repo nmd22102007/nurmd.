@@ -248,36 +248,6 @@ export const Tools = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-40 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 relative z-10">
-          <div className="max-w-xl text-center md:text-left">
-            <h2 className="text-5xl md:text-8xl font-black text-white leading-tight mb-8">
-              Let's build the <br />
-              <span className="text-slate-600 italic font-serif">future</span> together.
-            </h2>
-            <p className="text-slate-400 text-lg">
-              Available for freelance projects, modern web applications, and creative collaborations.
-            </p>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group flex items-center space-x-6 bg-white/[0.03] border border-white/10 hover:border-accent/50 p-6 pl-10 rounded-full transition-all backdrop-blur-xl"
-          >
-            <span className="text-white font-black uppercase tracking-widest text-lg">Contact Me</span>
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center group-hover:bg-accent transition-colors duration-500">
-              <ArrowRight className="w-6 h-6 text-navy-dark" />
-            </div>
-          </motion.button>
-        </div>
-        
-        {/* Floating Background Particles */}
-        <div className="absolute top-1/2 left-1/4 w-2 h-2 rounded-full bg-accent/40 animate-float" />
-        <div className="absolute top-1/3 right-1/4 w-3 h-3 rounded-full bg-blue-500/30 animate-float-delayed" />
-      </section>
     </Layout>
   );
 };

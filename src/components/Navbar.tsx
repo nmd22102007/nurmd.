@@ -22,7 +22,7 @@ export const Navbar = () => {
   const navLinks = [
     { name: 'About', href: '/about' },
     { name: 'Services', href: '/services' },
-    { name: 'Experience', href: '/#experience' },
+    { name: 'Experience', href: '/experience' },
     { name: 'Tools', href: '/tools' },
     { name: 'Portfolio', href: '/portfolio' },
     { name: 'Blog', href: '/blog' },

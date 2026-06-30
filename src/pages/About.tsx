@@ -133,6 +133,10 @@ const AnimatedCounter = ({ value }: { value: string }) => {
 };
 
 export const About = () => {
+  useEffect(() => {
+    document.title = "nurmd. | About";
+  }, []);
+
   const [aboutData, setAboutData] = useState<AboutData>(() => {
     const cached = localStorage.getItem('siteConfig_about');
     if (cached) {

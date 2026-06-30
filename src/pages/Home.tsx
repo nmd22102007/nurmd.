@@ -3,9 +3,6 @@ import { motion, useInView } from 'motion/react';
 import { Layout } from '../components/Layout';
 import { Hero } from '../components/Hero';
 import { Services } from '../components/Services';
-import { Portfolio } from '../components/Portfolio';
-import { Contact } from '../components/Contact';
-import { BlogSection } from '../components/BlogSection';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
@@ -150,75 +147,8 @@ const Home = () => {
       </section>
 
       <Services />
-
-      {/* Experience Timeline Mini */}
-      {/* 
-      <section id="experience" className="py-24 px-6 bg-navy/30">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold mb-16">Experience</h2>
-          <div className="space-y-12">
-            <ExperienceItem 
-              period="2022 - Present" 
-              role="Senior Web Developer" 
-              company="Future Tech Solutions" 
-              description="Leading the frontend architecture and building AI-integrated dashboards."
-            />
-            <ExperienceItem 
-              period="2020 - 2022" 
-              role="UI/UX Designer" 
-              company="Creative Labs" 
-              description="Designed over 30 bespoke user experiences for international clients."
-            />
-            <ExperienceItem 
-              period="2018 - 2020" 
-              role="Junior Developer" 
-              company="Startup Hub" 
-              description="Started my journey by building responsive web apps using modern tech stacks."
-            />
-          </div>
-        </div>
-      </section>
-      */}
-
-      {/* Tools Section */}
-      <section id="tools" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold mb-16 text-center">My Arsenal</h2>
-          <div className="flex flex-wrap justify-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
-            <ToolIcon name="React" />
-            <ToolIcon name="Firebase" />
-            <ToolIcon name="Framer Motion" />
-            <ToolIcon name="Gemini AI" />
-            <ToolIcon name="Figma" />
-          </div>
-        </div>
-      </section>
-
-      <Portfolio />
-      <BlogSection />
-      <Contact />
     </Layout>
   );
 };
-
-const ExperienceItem = ({ period, role, company, description }: any) => (
-  <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 group">
-    <div className="text-gray-500 font-bold uppercase tracking-widest text-sm pt-2">{period}</div>
-    <div className="glass p-8 rounded-3xl group-hover:border-accent transition-colors">
-      <h3 className="text-2xl font-bold mb-2">{role}</h3>
-      <p className="text-accent font-bold mb-4">{company}</p>
-      <p className="text-gray-400">{description}</p>
-    </div>
-  </div>
-);
-
-const ToolIcon = ({ name }: { name: string }) => (
-  <div className="flex flex-col items-center group">
-    <div className="w-16 h-16 glass rounded-2xl flex items-center justify-center mb-4 group-hover:border-accent transition-all">
-      <span className="text-xs font-bold text-gray-500 group-hover:text-white transition-colors">{name[0]}</span>
-    </div>
-    <span className="text-xs font-bold uppercase tracking-widest text-gray-600 group-hover:text-accent transition-colors">{name}</span>
-  </div>
-);
 
 export default Home;
