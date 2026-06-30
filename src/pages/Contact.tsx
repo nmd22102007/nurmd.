@@ -237,20 +237,7 @@ export const Contact = () => {
                     </div>
                   </div>
 
-                  {/* Availability Badge */}
-                  <div className="mt-16 p-8 bg-accent/5 border border-accent/20 rounded-3xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-2 h-full bg-accent/20" />
-                    <div className="flex items-center space-x-4 mb-4">
-                      <div className="relative">
-                        <div className="w-3 h-3 bg-emerald-500 rounded-full" />
-                        <div className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-50" />
-                      </div>
-                      <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white">Currently Available</h4>
-                    </div>
-                    <p className="text-sm text-slate-400 leading-relaxed">
-                      Open for freelance projects, collaborations, startup ideas, and modern web development work.
-                    </p>
-                  </div>
+
                 </div>
               </div>
             </motion.div>
@@ -384,88 +371,6 @@ export const Contact = () => {
             })}
           </div>
         </div>
-      </section>
-
-      {/* Map Section Placeholder / Futuristic Display */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative glass rounded-[60px] h-[500px] overflow-hidden group">
-            <div className="absolute inset-0 bg-slate-900/50" />
-            
-            {/* Styled Map Placeholder */}
-            <div className="absolute inset-0 opacity-40">
-              <div className="grid-overlay absolute inset-0 mix-blend-overlay" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-accent/10 rounded-full animate-pulse" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-blue-500/10 rounded-full animate-pulse-slow" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-accent/20 rounded-full" />
-            </div>
-
-            {/* Animated Pin */}
-            <div className="absolute top-[45%] left-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="relative">
-                <div className="w-4 h-4 bg-accent rounded-full shadow-[0_0_20px_rgba(34,211,238,1)]" />
-                <div className="absolute inset-0 bg-accent rounded-full animate-ping" />
-              </div>
-            </div>
-
-            {/* Map Info Card */}
-            <div className="absolute bottom-12 left-12 z-20">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="glass p-8 rounded-[32px] border-accent/30 backdrop-blur-2xl"
-              >
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center text-accent">
-                    <Globe className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black text-white">Based in {contactData.location.split(',').pop()?.trim() || 'Bangladesh'}</h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{contactData.location}</p>
-                  </div>
-                </div>
-                <p className="text-slate-400 text-sm max-w-[250px] leading-relaxed">
-                  Working remotely with teams and clients worldwide.
-                </p>
-              </motion.div>
-            </div>
-            
-            {/* Visual Atmosphere overlay */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-navy-dark/80 via-transparent to-navy-dark/40" />
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-40 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 relative z-10">
-          <div className="max-w-xl text-center md:text-left">
-            <h2 className="text-5xl md:text-8xl font-black text-white leading-tight mb-8">
-              Let's connect <br />
-              <span className="text-slate-600 italic font-serif">there</span>
-            </h2>
-            <p className="text-slate-400 text-lg">
-              Let's build something futuristic together.
-            </p>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group flex items-center space-x-6 bg-white/[0.03] border border-white/10 hover:border-accent/50 p-6 pl-10 rounded-full transition-all backdrop-blur-xl"
-          >
-            <span className="text-white font-black uppercase tracking-widest text-lg">Start a Project</span>
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center group-hover:bg-accent transition-colors duration-500">
-              <ArrowRight className="w-6 h-6 text-navy-dark" />
-            </div>
-          </motion.button>
-        </div>
-        
-        {/* Floating Background Particles */}
-        <div className="absolute top-1/2 left-1/4 w-2 h-2 rounded-full bg-accent/40 animate-float" />
-        <div className="absolute top-1/3 right-1/4 w-3 h-3 rounded-full bg-blue-500/30 animate-float-delayed" />
       </section>
     </Layout>
   );

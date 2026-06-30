@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Github, Twitter, Linkedin, Mail, MapPin } from 'lucide-react';
+import { Github, Twitter, Linkedin, Mail, MapPin, ArrowRight } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -98,35 +98,51 @@ export const Footer = () => {
       <div className="grid-overlay absolute inset-0 opacity-20 pointer-events-none" />
       
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-16">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-12 mb-16">
           <div className="max-w-xl">
-            <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+            <h2 className="text-5xl md:text-7xl font-bold mb-4 md:mb-0 leading-tight">
               {data.connectTitleMain} <br />
               <span className="text-gray-500">{data.connectTitleSpan}</span>
             </h2>
-            <p className="text-gray-400 text-lg">
-              {data.description}
-            </p>
-            <div className="mt-4">
-              <a href="/demo" className="inline-flex items-center gap-2 text-accent text-sm font-medium hover:text-white transition-colors">
-                <span>{data.playgroundText} &rarr;</span>
-              </a>
-            </div>
           </div>
           
-          <div className="flex flex-col space-y-6">
-            {data.email && (
-              <div className="flex items-center space-x-3 text-gray-400">
-                <Mail className="w-5 h-5 text-accent" />
-                <span>{data.email}</span>
+          <div className="flex flex-col items-start md:items-end space-y-8">
+            <motion.a
+              href="/contact"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative flex items-center bg-white/[0.03] border border-white/5 hover:bg-[#4ade80] hover:border-[#4ade80] rounded-full transition-all duration-300 backdrop-blur-md w-[170px] h-[56px] overflow-hidden"
+            >
+              {/* Icon Container */}
+              <div className="absolute left-2 w-10 h-10 bg-[#1a1a1a] rounded-full flex items-center justify-center z-10 transition-all duration-500 group-hover:left-[122px]">
+                <ArrowRight className="w-4 h-4 text-white transition-transform duration-500 group-hover:-rotate-180" />
               </div>
-            )}
-            {data.location && (
-              <div className="flex items-center space-x-3 text-gray-400">
-                <MapPin className="w-5 h-5 text-accent" />
-                <span>{data.location}</span>
+
+              {/* Text Container */}
+              <div className="absolute inset-0 flex flex-col justify-center transition-all duration-500 pl-14 pr-2 group-hover:pl-2 group-hover:pr-14 text-white">
+                <div className="relative h-5 overflow-hidden w-full">
+                  <span className="absolute inset-0 flex items-center justify-center text-white font-medium text-sm transition-transform duration-500 group-hover:-translate-y-full">
+                    Let's Connect
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm translate-y-full transition-transform duration-500 group-hover:translate-y-0">
+                    Chat Now
+                  </span>
+                </div>
               </div>
-            )}
+            </motion.a>
+
+            <div className="flex flex-col items-start md:items-end space-y-3">
+              {data.email && (
+                <div className="flex items-center space-x-3 text-gray-400 text-sm">
+                  <span>{data.email}</span>
+                </div>
+              )}
+              {data.location && (
+                <div className="flex items-center space-x-3 text-gray-400 text-sm">
+                  <span>{data.location}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
