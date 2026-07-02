@@ -345,6 +345,8 @@ export const Contact = () => {
                 IconComponent = DiscordIcon;
               } else if (link.iconName === 'X' || link.name.toLowerCase() === 'x' || link.iconName === 'Twitter' || link.name.toLowerCase() === 'twitter') {
                 IconComponent = XIcon;
+              } else if (link.iconName === 'WhatsAppIcon' || link.name.toLowerCase() === 'whatsapp') {
+                IconComponent = WhatsAppIcon;
               }
               return (
                 <motion.a
