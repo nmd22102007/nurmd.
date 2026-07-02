@@ -37,7 +37,7 @@ interface TimelineItem {
 export const AboutEditor = () => {
   const [title, setTitle] = useState('About me');
   const [subtitle, setSubtitle] = useState('A deeper look into my background, creative philosophy, and professional milestones.');
-  const [imageUrl, setImageUrl] = useState('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80');
+  const [imageUrl, setImageUrl] = useState('');
   const [heading, setHeading] = useState('Crafting Digital Realities');
   const [description1, setDescription1] = useState("I'm a passionate digital creator focused on turning ideas into immersive digital experiences. I design and build modern web products that blend technical precision with artistic identity.");
   const [description2, setDescription2] = useState("I believe great design is built on both imagination and discipline. My workflow combines research, modern engineering, and technical aesthetics to deliver elegant, production-ready interfaces.");
@@ -228,8 +228,8 @@ export const AboutEditor = () => {
                 className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-gray-300"
                 placeholder="https://..."
               />
-              <div className="h-28 w-full rounded-lg overflow-hidden border border-[#222] mt-2">
-                <img src={imageUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80'} alt="Preview" className="w-full h-full object-cover" />
+              <div className="h-28 w-full rounded-lg overflow-hidden border border-[#222] mt-2 bg-[#111]">
+                {imageUrl && <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />}
               </div>
             </div>
             <div className="space-y-2">

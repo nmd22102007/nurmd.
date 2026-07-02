@@ -83,7 +83,7 @@ const DEFAULT_HERO_DATA: HeroData = {
   ctaUrl: "#portfolio",
   secondaryCtaText: "Let's Connect",
   secondaryCtaUrl: "#contact",
-  imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80",
+  imageUrl: "",
   highlightPills: [
     "Futuristic Web Experiences",
     "Interactive Motion",

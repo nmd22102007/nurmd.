@@ -78,15 +78,17 @@ export const BlogSection = () => {
                 transition={{ delay: index * 0.1 }}
                 className="group glass rounded-[32px] overflow-hidden flex flex-col"
               >
-                <div className="aspect-[16/10] overflow-hidden">
-                  <img 
-                    src={post.thumbnailUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80'} 
-                    alt={post.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    decoding="async"
-                    referrerPolicy="no-referrer"
-                  />
+                <div className="aspect-[16/10] overflow-hidden bg-navy-dark/40">
+                  {post.thumbnailUrl && (
+                    <img 
+                      src={post.thumbnailUrl} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
                 </div>
                 <div className="p-8 flex-grow flex flex-col">
                   <div className="flex items-center space-x-4 text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">

@@ -96,12 +96,14 @@ export const BlogPost = () => {
       <article className="pt-20 pb-32">
         {/* Post Hero */}
         <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
-           <div className="absolute inset-0 z-0">
-             <img 
-               src={post.image || post.thumbnailUrl} 
-               alt={post.title} 
-               className="w-full h-full object-cover"
-             />
+           <div className="absolute inset-0 z-0 bg-navy-dark/40">
+             {(post.image || post.thumbnailUrl) && (
+               <img 
+                 src={post.image || post.thumbnailUrl} 
+                 alt={post.title} 
+                 className="w-full h-full object-cover"
+               />
+             )}
              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/60 to-transparent" />
              <div className="absolute inset-0 bg-navy-dark/40" />
            </div>

@@ -106,12 +106,14 @@ export const ProjectDetail = () => {
               </div>
             </div>
 
-            <div className="glass rounded-[40px] overflow-hidden border border-white/5 relative group">
-              <img 
-                src={project.imageUrl} 
-                alt={project.title} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
+            <div className="glass rounded-[40px] overflow-hidden border border-white/5 relative group bg-navy-dark/40 aspect-video">
+              {project.imageUrl && (
+                <img 
+                  src={project.imageUrl} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              )}
             </div>
           </div>
 

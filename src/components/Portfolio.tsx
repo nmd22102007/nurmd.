@@ -121,14 +121,16 @@ const ProjectCard = ({ project }: { project: any }) => (
     className="group relative glass rounded-[40px] overflow-hidden hover:border-accent/30 transition-all duration-500"
   >
     <div className="aspect-[16/10] overflow-hidden bg-slate-900">
-      <img 
-        src={project.imageUrl} 
-        alt={project.title} 
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100"
-        loading="lazy"
-        decoding="async"
-        referrerPolicy="no-referrer"
-      />
+      {project.imageUrl && (
+        <img 
+          src={project.imageUrl} 
+          alt={project.title} 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+        />
+      )}
     </div>
     
     <div className="p-8">

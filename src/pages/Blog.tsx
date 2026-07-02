@@ -141,11 +141,13 @@ export const Blog = () => {
             >
               {/* Background with zoom */}
               <div className="absolute inset-0">
-                <img 
-                  src={featuredPost.image} 
-                  alt={featuredPost.title} 
-                  className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
-                />
+                {featuredPost.image && (
+                  <img 
+                    src={featuredPost.image} 
+                    alt={featuredPost.title} 
+                    className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/40 to-transparent" />
               </div>
 
@@ -224,15 +226,17 @@ export const Blog = () => {
                     className="group"
                   >
                     <div className="glass rounded-[40px] overflow-hidden flex flex-col h-full hover:border-accent/30 transition-all duration-500 relative">
-                      <div className="aspect-[16/10] overflow-hidden relative">
-                        <img 
-                          src={post.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80'} 
-                          alt={post.title} 
-                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                          loading="lazy"
-                          decoding="async"
-                          referrerPolicy="no-referrer"
-                        />
+                      <div className="aspect-[16/10] overflow-hidden relative bg-navy-dark/40">
+                        {post.image && (
+                          <img 
+                            src={post.image} 
+                            alt={post.title} 
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            loading="lazy"
+                            decoding="async"
+                            referrerPolicy="no-referrer"
+                          />
+                        )}
                         <div className="absolute inset-0 bg-navy-dark/20 group-hover:bg-navy-dark/0 transition-colors" />
                         <div className="absolute top-6 left-6">
                            <span className="px-4 py-1.5 rounded-full bg-navy-dark/60 backdrop-blur-xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-accent">

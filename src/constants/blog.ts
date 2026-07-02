@@ -37,7 +37,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 Conclusion: Less is more when you have the right light.
     `,
     tags: ["Next.js", "Tailwind CSS", "Framer Motion"],
-    image: "https://images.unsplash.com/photo-155066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     createdAt: { toDate: () => new Date('2026-05-10') },
     readTime: "12 min",
     isFeatured: true
@@ -49,7 +49,7 @@ Conclusion: Less is more when you have the right light.
     description: "My favorite VS Code extensions for productivity, cleaner workflow, and faster development.",
     content: "Content for VS Code extensions...",
     tags: ["VS Code", "Productivity"],
-    image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     createdAt: { toDate: () => new Date('2026-05-08') },
     readTime: "8 min"
   },
@@ -60,7 +60,7 @@ Conclusion: Less is more when you have the right light.
     description: "How I create AI-powered automation systems using APIs, Node.js, and modern workflows.",
     content: "Content for AI automation...",
     tags: ["AI", "Automation", "Node.js"],
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     createdAt: { toDate: () => new Date('2026-05-05') },
     readTime: "15 min"
   },
@@ -71,7 +71,7 @@ Conclusion: Less is more when you have the right light.
     description: "Exploring futuristic UI trends, glassmorphism, motion design, and modern web experiences.",
     content: "Content for UI trends...",
     tags: ["UI/UX", "Design"],
-    image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     createdAt: { toDate: () => new Date('2026-05-01') },
     readTime: "10 min"
   },
@@ -82,7 +82,7 @@ Conclusion: Less is more when you have the right light.
     description: "Performance optimization tips and scalable architecture for modern web applications.",
     content: "Content for Next.js performance...",
     tags: ["Next.js", "Performance"],
-    image: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     createdAt: { toDate: () => new Date('2026-04-28') },
     readTime: "18 min"
   },
@@ -93,7 +93,7 @@ Conclusion: Less is more when you have the right light.
     description: "A complete look at my coding setup, tools, development environment, and workflow process.",
     content: "Content for dev setup...",
     tags: ["Setup", "Workflow"],
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     createdAt: { toDate: () => new Date('2026-04-25') },
     readTime: "5 min"
   }

@@ -24,7 +24,7 @@ const projects = [
     category: "Web Apps",
     description: "A futuristic Bangladeshi tech platform for PC building, product comparison, and technology content.",
     tech: ["Next.js", "Tailwind CSS", "Firebase", "MongoDB"],
-    image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.1
@@ -35,7 +35,7 @@ const projects = [
     category: "AI",
     description: "A modern AI-powered chat platform with futuristic UI and intelligent automation features.",
     tech: ["React", "Node.js", "OpenAI API"],
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.2
@@ -46,7 +46,7 @@ const projects = [
     category: "UI/UX",
     description: "A cinematic personal portfolio with smooth animations and luxury futuristic design.",
     tech: ["Next.js", "Framer Motion", "Tailwind CSS"],
-    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.3
@@ -57,7 +57,7 @@ const projects = [
     category: "Dashboard",
     description: "A custom server management dashboard for Minecraft hosting and real-time server control.",
     tech: ["React", "Firebase", "Express.js"],
-    image: "https://images.unsplash.com/photo-1587573089734-09cb9444476a?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.4
@@ -68,7 +68,7 @@ const projects = [
     category: "Dashboard",
     description: "A smart WiFi management interface for ESP8266 devices with modern responsive UI.",
     tech: ["HTML", "CSS", "JavaScript"],
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.5
@@ -79,7 +79,7 @@ const projects = [
     category: "AI",
     description: "An intelligent workflow automation system with chatbot integration and task management.",
     tech: ["Node.js", "Firebase", "AI APIs"],
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.6
@@ -90,7 +90,7 @@ const projects = [
     category: "Creative",
     description: "A premium futuristic shopping interface concept with luxury minimal aesthetics.",
     tech: ["Figma", "React", "Tailwind"],
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.7
@@ -101,7 +101,7 @@ const projects = [
     category: "Dashboard",
     description: "A modern admin dashboard with analytics, charts, authentication, and responsive layouts.",
     tech: ["Next.js", "Chart.js", "Firebase"],
-    image: "https://images.unsplash.com/photo-1551288049-bbbda536639a?auto=format&fit=crop&q=80&w=1000",
+    image: "",
     link: "#",
     github: "#",
     delay: 0.8
@@ -197,14 +197,16 @@ export const Portfolio = () => {
                   transition={{ duration: 0.5 }}
                   className="group relative"
                 >
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-[40px] glass border border-white/5 group-hover:border-accent/40 transition-all duration-700">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-[40px] glass border border-white/5 group-hover:border-accent/40 transition-all duration-700 bg-navy-dark/40">
                     {/* Project Image */}
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                      referrerPolicy="no-referrer"
-                    />
+                    {project.image && (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
                     
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-navy-dark/80 opacity-0 group-hover:opacity-100 transition-all duration-500 backdrop-blur-md flex flex-col justify-between p-10 translate-y-4 group-hover:translate-y-0">

@@ -28,7 +28,7 @@ export const HeroEditor = () => {
   const [ctaUrl, setCtaUrl] = useState('#portfolio');
   const [secondaryCtaText, setSecondaryCtaText] = useState("Let's Connect");
   const [secondaryCtaUrl, setSecondaryCtaUrl] = useState('#contact');
-  const [imageUrl, setImageUrl] = useState('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80');
+  const [imageUrl, setImageUrl] = useState('');
   
   // Dynamic lists
   const [highlightPills, setHighlightPills] = useState<string[]>([

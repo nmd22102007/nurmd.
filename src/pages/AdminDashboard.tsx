@@ -59,7 +59,7 @@ const sampleLatestProjects = [
     id: "sample-1",
     title: "Threshold of Light",
     category: "Full Stack",
-    imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "",
     tech: ["Vite", "Tailwind CSS", "Three.js"],
     githubUrl: "https://github.com/nurmd",
     liveUrl: "https://nurmd.top/",
@@ -69,7 +69,7 @@ const sampleLatestProjects = [
     id: "sample-2",
     title: "Compact Clock",
     category: "Web Design",
-    imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "",
     tech: ["React", "Framer Motion", "Mono Font"],
     githubUrl: "https://github.com/nurmd",
     liveUrl: "https://nurmd.top/",
@@ -79,7 +79,7 @@ const sampleLatestProjects = [
     id: "sample-3",
     title: "Samsung Adapter",
     category: "UI/UX",
-    imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "",
     tech: ["Figma", "Interaction Design", "Renders"],
     githubUrl: "#",
     liveUrl: "https://nurmd.top/",
@@ -89,7 +89,7 @@ const sampleLatestProjects = [
     id: "sample-4",
     title: "Bluetooth Speaker",
     category: "UI/UX",
-    imageUrl: "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "",
     tech: ["Industrial Modeling", "Product UI", "Aesthetics"],
     githubUrl: "#",
     liveUrl: "https://nurmd.top/",
@@ -99,7 +99,7 @@ const sampleLatestProjects = [
     id: "sample-5",
     title: "Blow Torch",
     category: "Web Design",
-    imageUrl: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=600",
+    imageUrl: "",
     tech: ["Canvas GL", "Particle Synthesizer", "React"],
     githubUrl: "https://github.com/nurmd",
     liveUrl: "https://nurmd.top/",
@@ -359,7 +359,7 @@ export const AdminDashboard = () => {
               category: "Productivity",
               slug: "microsoft-365-office-free",
               published: true,
-              imageUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=600",
+              imageUrl: "",
               content: `# How to access Microsoft 365 Office suites for Free
 
 Microsoft offers official browser-based versions of Word, Excel, PowerPoint, and Outlook completely free of charge. 
@@ -379,7 +379,7 @@ You can edit and remove these articles natively as desired.`,
               category: "UI/UX",
               slug: "how-i-built-my-futuristic-portfolio",
               published: true,
-              imageUrl: "https://images.unsplash.com/photo-155066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000",
+              imageUrl: "",
               content: `
 # Behind the Scenes: Building a Futuristic Portfolio
 
@@ -489,7 +489,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
       title: '',
       description: '',
       category: 'Web Design',
-      imageUrl: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: '',
       technologies: 'React, Tailwind, TypeScript',
       githubUrl: '#',
       liveUrl: '#',
@@ -574,7 +574,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
       content: '',
       slug: '',
       category: 'Development',
-      imageUrl: 'https://images.unsplash.com/photo-155066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000',
+      imageUrl: '',
       published: true
     });
     setShowPostModal(true);
@@ -606,7 +606,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
         content: postForm.content,
         slug: postForm.slug || postForm.title.toLowerCase().replace(/[^a-z0-9_]+/g, '-').replace(/(^-|-$)/g, ''),
         category: postForm.category,
-        imageUrl: postForm.imageUrl || 'https://images.unsplash.com/photo-155066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000',
+        imageUrl: postForm.imageUrl || '',
         published: postForm.published,
         updatedAt: serverTimestamp()
       };
@@ -776,11 +776,13 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                 className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 p-[1.5px] hover:scale-105 transition-transform"
               >
                 <div className="w-full h-full rounded-full bg-[#0B0B0F] flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.uid || 'WHOAMI'}`} 
-                    alt="Whoami profile" 
-                    className="w-full h-full object-cover"
-                  />
+                  {profile?.avatarUrl && (
+                    <img 
+                      src={profile.avatarUrl} 
+                      alt="Whoami profile" 
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
               </Link>
               <button 
@@ -1081,11 +1083,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                   <tr key={p.id} className="hover:bg-white/[0.02] group transition-colors">
                                     <td className="py-4">
                                       <div className="flex items-center space-x-3.5">
-                                        <img 
-                                          src={p.imageUrl} 
-                                          alt={p.title} 
-                                          className="w-10 h-7 object-cover rounded-md border border-[#1F2937]/50" 
-                                        />
+                                        <div className="w-10 h-7 rounded-md border border-[#1F2937]/50 bg-navy-dark/40 overflow-hidden flex-shrink-0">
+                                          {p.imageUrl && (
+                                            <img 
+                                              src={p.imageUrl} 
+                                              alt={p.title} 
+                                              className="w-full h-full object-cover" 
+                                            />
+                                          )}
+                                        </div>
                                         <span className="font-bold text-white group-hover:text-cyan-300 transition-colors">{p.title}</span>
                                       </div>
                                     </td>
@@ -1137,11 +1143,13 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                           <div className="flex items-center gap-3.5 mb-4">
                             <div className="w-11 h-11 rounded-full bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center overflow-hidden">
-                              <img 
-                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" 
-                                alt={activeEngagementInquiry.name} 
-                                className="w-full h-full object-cover" 
-                              />
+                              {activeEngagementInquiry.imageUrl && (
+                                <img 
+                                  src={activeEngagementInquiry.imageUrl} 
+                                  alt={activeEngagementInquiry.name} 
+                                  className="w-full h-full object-cover" 
+                                />
+                              )}
                             </div>
                             <div>
                               <h4 className="font-extrabold text-white text-base">{activeEngagementInquiry.name}</h4>
@@ -1276,11 +1284,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <tr key={post.id} className="hover:bg-white/[0.01] transition-all group">
                                 <td className="py-5">
                                   <div className="flex items-center space-x-4">
-                                    <img 
-                                      src={post.image || "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=100"} 
-                                      alt={post.title} 
-                                      className="w-12 h-10 object-cover rounded-lg border border-[#1F2937]/50" 
-                                    />
+                                    <div className="w-12 h-10 rounded-lg border border-[#1F2937]/50 bg-navy-dark/40 overflow-hidden flex-shrink-0">
+                                      {post.image && (
+                                        <img 
+                                          src={post.image} 
+                                          alt={post.title} 
+                                          className="w-full h-full object-cover" 
+                                        />
+                                      )}
+                                    </div>
                                     <div>
                                       <p className="font-extrabold text-white group-hover:text-cyan-300 transition-colors">{post.title}</p>
                                       <p className="text-xs text-gray-500">Category: {post.category || "General"}</p>
@@ -1339,11 +1351,13 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       {projects.map((proj) => (
                         <div key={proj.id} className="bg-black/60 border border-[#1F2937] rounded-3xl overflow-hidden flex flex-col group hover:border-cyan-400/50 transition-all duration-300">
                           <div className="aspect-video relative overflow-hidden bg-black/40">
-                            <img 
-                              src={proj.imageUrl || "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=600"} 
-                              alt={proj.title} 
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
+                            {proj.imageUrl && (
+                              <img 
+                                src={proj.imageUrl} 
+                                alt={proj.title} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            )}
                             <div className="absolute top-4 left-4">
                               <span className="px-3 py-1 bg-black/80 text-cyan-400 border border-[#1F2937] font-bold text-[10px] uppercase tracking-wider rounded-full backdrop-blur-md">
                                 {proj.category}
@@ -1454,11 +1468,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <tr key={post.id} className="hover:bg-white/[0.01] transition-colors">
                                 <td className="p-6">
                                   <div className="flex items-center space-x-4">
-                                    <img 
-                                      src={post.image || post.imageUrl || "https://images.unsplash.com/photo-155066931-4365d14bab8c?auto=format&fit=crop&q=80&w=150"} 
-                                      alt={post.title} 
-                                      className="w-12 h-10 object-cover rounded-md border border-[#1F2937]/30"
-                                    />
+                                    <div className="w-12 h-10 rounded-md border border-[#1F2937]/30 bg-navy-dark/40 overflow-hidden flex-shrink-0">
+                                      {(post.image || post.imageUrl) && (
+                                        <img 
+                                          src={post.image || post.imageUrl} 
+                                          alt={post.title} 
+                                          className="w-full h-full object-cover"
+                                        />
+                                      )}
+                                    </div>
                                     <div>
                                       <p className="font-extrabold text-white text-base">{post.title}</p>
                                       <p className="text-xs text-gray-500">
@@ -1926,7 +1944,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       value={projectForm.imageUrl}
                       onChange={(e) => setProjectForm({...projectForm, imageUrl: e.target.value})}
                       className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
-                      placeholder="https://images.unsplash.com/photo-..."
+                      placeholder=""
                     />
                   </div>
 
@@ -2092,7 +2110,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       value={postForm.imageUrl}
                       onChange={(e) => setProjectPostForm({...postForm, imageUrl: e.target.value})}
                       className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
-                      placeholder="https://images.unsplash.com/photo-..."
+                      placeholder=""
                     />
                   </div>
                 </div>
