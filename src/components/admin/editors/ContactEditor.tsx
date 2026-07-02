@@ -1,3 +1,4 @@
+import { WhatsAppIcon } from '../../icons/WhatsApp';
 import React, { useState, useEffect } from 'react';
 import { db } from '../../../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -11,7 +12,7 @@ import {
   Facebook,
   Github,
   Linkedin,
-  MessageCircle,
+  
   MessageSquare,
   Hash,
   Twitter,
@@ -44,7 +45,7 @@ const XIcon = ({ className }: { className?: string }) => (
 );
 
 const DEFAULT_SOCIAL_LINKS: SocialLinkItem[] = [
-  { name: 'WhatsApp', iconName: 'MessageCircle', href: '#', label: 'Direct Chat' },
+  { name: 'WhatsApp', iconName: 'WhatsAppIcon', href: '#', label: 'Direct Chat' },
   { name: 'Facebook', iconName: 'Facebook', href: '#', label: 'Follow' },
   { name: 'GitHub', iconName: 'Github', href: '#', label: 'Code' },
   { name: 'Discord', iconName: 'Discord', href: '#', label: 'Community' },
@@ -57,7 +58,7 @@ const AVAILABLE_ICONS = [
   { name: 'Github', icon: Github },
   { name: 'Linkedin', icon: Linkedin },
   { name: 'Discord', icon: DiscordIcon },
-  { name: 'MessageCircle', icon: MessageCircle },
+  { name: 'WhatsAppIcon', icon: WhatsAppIcon },
   { name: 'MessageSquare', icon: MessageSquare },
   { name: 'X', icon: XIcon },
   { name: 'Instagram', icon: Instagram },
@@ -173,7 +174,7 @@ export const ContactEditor = () => {
               type="text" 
               value={phone}
               onChange={e => setPhone(e.target.value)}
-              placeholder="+880 1700-000000" 
+              placeholder="+8801741837484" 
               className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-400/50" 
             />
           </div>
@@ -183,7 +184,7 @@ export const ContactEditor = () => {
               type="text" 
               value={whatsapp}
               onChange={e => setWhatsapp(e.target.value)}
-              placeholder="+880 1700-000000" 
+              placeholder="+8801741837484" 
               className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-400/50" 
             />
           </div>

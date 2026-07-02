@@ -165,6 +165,16 @@ export const About = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const [heroData, setHeroData] = useState<any>(() => {
+    const cached = localStorage.getItem('siteConfig_hero');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return null;
+  });
+
   useEffect(() => {
     const docRef = doc(db, 'siteConfig', 'about');
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
@@ -198,7 +208,19 @@ export const About = () => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    const heroRef = doc(db, 'siteConfig', 'hero');
+    const unsubscribeHero = onSnapshot(heroRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        setHeroData(data);
+        localStorage.setItem('siteConfig_hero', JSON.stringify(data));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeHero();
+    };
   }, []);
 
   return (
@@ -251,9 +273,9 @@ export const About = () => {
             <div className="absolute inset-0 bg-accent/5 rounded-[48px] blur-3xl opacity-30 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none" />
             
             <div className="relative aspect-[4/5] rounded-[48px] overflow-hidden border border-border hover:border-accent/40 transition-all duration-700 shadow-[0_30px_100px_rgba(0,0,0,0.6)]">
-              {aboutData?.imageUrl && (
+              {(heroData?.imageUrl || aboutData?.imageUrl) && (
                 <img 
-                  src={aboutData.imageUrl} 
+                  src={heroData?.imageUrl || aboutData?.imageUrl} 
                   alt="Portrait presentation" 
                   className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                   referrerPolicy="no-referrer"

@@ -63,6 +63,16 @@ const Home = () => {
     return null;
   });
 
+  const [heroData, setHeroData] = useState<any>(() => {
+    const cached = localStorage.getItem('siteConfig_hero');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return null;
+  });
+
   useEffect(() => {
     const docRef = doc(db, 'siteConfig', 'about');
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
@@ -74,7 +84,20 @@ const Home = () => {
     }, (err) => {
       console.error("Error loading home page about section:", err);
     });
-    return () => unsubscribe();
+
+    const heroRef = doc(db, 'siteConfig', 'hero');
+    const unsubscribeHero = onSnapshot(heroRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        setHeroData(data);
+        localStorage.setItem('siteConfig_hero', JSON.stringify(data));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeHero();
+    };
   }, []);
 
   return (
@@ -87,9 +110,9 @@ const Home = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="relative">
             <div className="aspect-square glass rounded-[60px] overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-              {aboutData?.imageUrl && (
+              {(heroData?.imageUrl || aboutData?.imageUrl) && (
                 <img 
-                  src={aboutData.imageUrl} 
+                  src={heroData?.imageUrl || aboutData?.imageUrl} 
                   alt="MD - Web Designer" 
                   className="w-full h-full object-cover -rotate-3 hover:rotate-0 transition-transform duration-500"
                   referrerPolicy="no-referrer"

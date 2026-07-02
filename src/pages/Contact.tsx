@@ -12,12 +12,13 @@ import {
   Github, 
   Facebook, 
   Linkedin,
-  MessageCircle,
+  
   Hash,
   ArrowRight,
   Sparkles,
   Globe
 } from 'lucide-react';
+import { WhatsAppIcon } from '../components/icons/WhatsApp';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -44,7 +45,7 @@ interface SocialLinkItem {
 }
 
 const DEFAULT_SOCIAL_LINKS: SocialLinkItem[] = [
-  { name: 'WhatsApp', iconName: 'MessageCircle', href: '#', label: 'Direct Chat' },
+  { name: 'WhatsApp', iconName: 'WhatsAppIcon', href: '#', label: 'Direct Chat' },
   { name: 'Facebook', iconName: 'Facebook', href: '#', label: 'Follow' },
   { name: 'GitHub', iconName: 'Github', href: '#', label: 'Code' },
   { name: 'Discord', iconName: 'Discord', href: '#', label: 'Community' },
@@ -75,8 +76,8 @@ export const Contact = () => {
         const parsed = JSON.parse(cached);
         return {
           email: parsed.email || 'nurmd.dev@gmail.com',
-          phone: parsed.phone || '+880 1700-000000',
-          whatsapp: parsed.whatsapp || '+880 1700-000000',
+          phone: parsed.phone || '+8801741837484',
+          whatsapp: parsed.whatsapp || '+8801741837484',
           location: parsed.location || 'Dhaka, Bangladesh',
           socialLinks: Array.isArray(parsed.socialLinks) ? parsed.socialLinks : DEFAULT_SOCIAL_LINKS
         };
@@ -86,8 +87,8 @@ export const Contact = () => {
     }
     return {
       email: 'nurmd.dev@gmail.com',
-      phone: '+880 1700-000000',
-      whatsapp: '+880 1700-000000',
+      phone: '+8801741837484',
+      whatsapp: '+8801741837484',
       location: 'Dhaka, Bangladesh',
       socialLinks: DEFAULT_SOCIAL_LINKS
     };
@@ -100,8 +101,8 @@ export const Contact = () => {
         const data = snapshot.data();
         const updatedData = {
           email: data.email || 'nurmd.dev@gmail.com',
-          phone: data.phone || '+880 1700-000000',
-          whatsapp: data.whatsapp || '+880 1700-000000',
+          phone: data.phone || '+8801741837484',
+          whatsapp: data.whatsapp || '+8801741837484',
           location: data.location || 'Dhaka, Bangladesh',
           socialLinks: Array.isArray(data.socialLinks) ? data.socialLinks : DEFAULT_SOCIAL_LINKS
         };
@@ -197,9 +198,9 @@ export const Contact = () => {
 
                   <div className="space-y-8">
                     <div className="flex items-center space-x-6 group/item">
-                      <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
+                      <a href={`mailto:${contactData.email}`} className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
                         <Mail className="w-6 h-6" />
-                      </div>
+                      </a>
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Public Email</p>
                         <a href={`mailto:${contactData.email}`} className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.email}</a>
@@ -207,9 +208,9 @@ export const Contact = () => {
                     </div>
 
                     <div className="flex items-center space-x-6 group/item">
-                      <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
+                      <a href={`tel:${contactData.phone.replace(/[^0-9+]/g, '')}`} className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
                         <Phone className="w-6 h-6" />
-                      </div>
+                      </a>
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Direct Phone</p>
                         <a href={`tel:${contactData.phone.replace(/[^0-9+]/g, '')}`} className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.phone}</a>
@@ -217,12 +218,12 @@ export const Contact = () => {
                     </div>
 
                     <div className="flex items-center space-x-6 group/item">
-                      <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
-                        <MessageCircle className="w-6 h-6" />
-                      </div>
+                      <a href={`https://wa.me/${contactData.whatsapp.replace(/[^0-9+]/g, '')}`} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center group-hover/item:border-accent group-hover/item:text-accent transition-all duration-500">
+                        <WhatsAppIcon className="w-6 h-6" />
+                      </a>
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">WhatsApp</p>
-                        <a href={`https://wa.me/${contactData.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.whatsapp}</a>
+                        <a href={`https://wa.me/${contactData.whatsapp.replace(/[^0-9+]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-white hover:text-accent transition-colors">{contactData.whatsapp}</a>
                       </div>
                     </div>
 
