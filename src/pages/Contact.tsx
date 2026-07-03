@@ -19,16 +19,9 @@ import {
   Globe
 } from 'lucide-react';
 import { WhatsAppIcon } from '../components/icons/WhatsApp';
+import { DiscordIcon } from '../components/icons/Discord';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-
-const DiscordIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-    <path d="M15 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-    <path d="M19.4 6a17.2 17.2 0 0 0-4.1-1.3c-.2.4-.4.8-.5 1.2-1.5-.2-2.9-.2-4.4 0-.1-.4-.3-.8-.5-1.2-1.4.3-2.8.8-4.1 1.3A17.9 17.9 0 0 0 2 17.5c1.6 1.2 3.1 1.9 4.6 2.4.4-.5.8-1 1.1-1.5-1-.4-2-.9-2.9-1.5.3-.2.6-.4.9-.6 3 1.4 6.2 1.4 9.2 0 .3.2.6.4.9.6-.9.6-1.9 1.1-2.9 1.5.3.5.7 1 1.1 1.5 1.5-.5 3-1.2 4.6-2.4a17.9 17.9 0 0 0-3.8-11.5z" />
-  </svg>
-);
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
