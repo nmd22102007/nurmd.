@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import * as Icons from 'lucide-react';
 import { 
   Mail, 
@@ -21,7 +23,7 @@ import {
 import { WhatsAppIcon } from '../components/icons/WhatsApp';
 import { DiscordIcon } from '../components/icons/Discord';
 import { db } from '../lib/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,15 +49,44 @@ const DEFAULT_SOCIAL_LINKS: SocialLinkItem[] = [
 ];
 
 export const Contact = () => {
+  const location = useLocation();
+  const { user } = useAuth();
+  
   const [formState, setFormState] = useState({
-    name: '',
-    email: '',
+    name: user?.displayName || '',
+    email: user?.email || '',
     subject: '',
     message: ''
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  
+
+  useEffect(() => {
+    if (user) {
+      setFormState(prev => ({
+        ...prev,
+        name: prev.name || user.displayName || '',
+        email: prev.email || user.email || ''
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (location.state?.scrollToForm) {
+      setTimeout(() => {
+        const form = document.getElementById('contact-form');
+        if (form) {
+          form.scrollIntoView({ behavior: 'smooth' });
+          const subjectInput = document.getElementById('subject');
+          if (subjectInput) {
+            setTimeout(() => subjectInput.focus(), 500);
+          }
+        }
+      }, 100);
+    }
+  }, [location]);
+
   const [contactData, setContactData] = useState<{
     email: string;
     phone: string;
@@ -110,14 +141,29 @@ export const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    setFormState({ name: '', email: '', subject: '', message: '' });
-    
-    setTimeout(() => setIsSuccess(false), 5000);
+    try {
+      await addDoc(collection(db, 'inquiries'), {
+        ...formState,
+        status: 'new',
+        createdAt: serverTimestamp()
+      });
+      
+      setIsSubmitting(false);
+      setIsSuccess(true);
+      setFormState({ 
+        name: user?.displayName || '', 
+        email: user?.email || '', 
+        subject: '', 
+        message: '' 
+      });
+      
+      setTimeout(() => setIsSuccess(false), 5000);
+    } catch (error) {
+      console.error("Error submitting inquiry:", error);
+      setIsSubmitting(false);
+      // Fallback in case firestore rules fail if the user is not authenticated or similar
+      alert("Failed to send message. Please try again later.");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -244,7 +290,7 @@ export const Contact = () => {
               className="lg:col-span-7"
             >
               <div className="glass p-10 md:p-12 rounded-[40px] relative overflow-hidden">
-                <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
+                <form id="contact-form" onSubmit={handleSubmit} className="relative z-10 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Full Name</label>
@@ -254,8 +300,9 @@ export const Contact = () => {
                         id="name"
                         value={formState.name}
                         onChange={handleChange}
+                        readOnly={!!user}
                         placeholder="John Doe" 
-                        className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 px-6 text-white focus:border-accent outline-none transition-all placeholder:text-slate-700"
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 px-6 text-white focus:border-accent outline-none transition-all placeholder:text-slate-700 read-only:cursor-default"
                       />
                     </div>
                     <div className="space-y-2">
@@ -266,8 +313,9 @@ export const Contact = () => {
                         id="email"
                         value={formState.email}
                         onChange={handleChange}
+                        readOnly={!!user}
                         placeholder="john@example.com" 
-                        className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 px-6 text-white focus:border-accent outline-none transition-all placeholder:text-slate-700"
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 px-6 text-white focus:border-accent outline-none transition-all placeholder:text-slate-700 read-only:cursor-default"
                       />
                     </div>
                   </div>

@@ -163,7 +163,7 @@ export const ThemeEditor = () => {
   return (
     <div className="space-y-8 text-white">
       <div>
-        <h4 className="text-xl font-bold flex items-center gap-2 text-cyan-400">
+        <h4 className="text-xl font-bold flex items-center gap-2 text-accent">
           <Palette className="w-5 h-5" />
           Color Theme & Brand Settings
         </h4>
@@ -189,10 +189,10 @@ export const ThemeEditor = () => {
                 type="button"
                 key={preset.id}
                 onClick={() => handleSelectPreset(preset)}
-                className={`flex flex-col items-start text-left p-5 rounded-2xl border transition-all relative ${isSelected ? 'border-cyan-400 bg-cyan-400/5' : 'border-[#1F2937]/50 bg-black/30 hover:border-gray-500'}`}
+                className={`flex flex-col items-start text-left p-5 rounded-2xl border transition-all relative ${isSelected ? 'border-accent bg-accent/5' : 'border-slate-800/50 bg-black/30 hover:border-gray-500'}`}
               >
                 {isSelected && (
-                  <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-cyan-400 flex items-center justify-center text-black">
+                  <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-accent flex items-center justify-center text-black">
                     <Check className="w-3 h-3" />
                   </span>
                 )}
@@ -210,7 +210,7 @@ export const ThemeEditor = () => {
       </div>
 
       {/* Advanced Custom Color Form */}
-      <div className="p-6 bg-slate-900/30 rounded-2xl border border-[#1F2937]/50 space-y-6">
+      <div className="p-6 bg-slate-900/30 rounded-2xl border border-slate-800/50 space-y-6">
         <div className="flex justify-between items-center">
           <span className="text-xs uppercase tracking-wider text-gray-400 font-bold">Custom Palette Override</span>
           {selectedThemeId !== 'carbon-sleek' && (
@@ -238,7 +238,7 @@ export const ThemeEditor = () => {
                 type="text"
                 value={customConfig.primary}
                 onChange={e => handleCustomColorChange('primary', e.target.value)}
-                className="flex-grow bg-[#1F2937] border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
+                className="flex-grow bg-slate-800 border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
               />
             </div>
           </div>
@@ -256,7 +256,7 @@ export const ThemeEditor = () => {
                 type="text"
                 value={customConfig.secondary}
                 onChange={e => handleCustomColorChange('secondary', e.target.value)}
-                className="flex-grow bg-[#1F2937] border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
+                className="flex-grow bg-slate-800 border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
               />
             </div>
           </div>
@@ -274,7 +274,7 @@ export const ThemeEditor = () => {
                 type="text"
                 value={customConfig.accent}
                 onChange={e => handleCustomColorChange('accent', e.target.value)}
-                className="flex-grow bg-[#1F2937] border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
+                className="flex-grow bg-slate-800 border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
               />
             </div>
           </div>
@@ -292,7 +292,7 @@ export const ThemeEditor = () => {
                 type="text"
                 value={customConfig.background}
                 onChange={e => handleCustomColorChange('background', e.target.value)}
-                className="flex-grow bg-[#1F2937] border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
+                className="flex-grow bg-slate-800 border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
               />
             </div>
           </div>
@@ -310,7 +310,7 @@ export const ThemeEditor = () => {
                 type="text"
                 value={customConfig.foreground}
                 onChange={e => handleCustomColorChange('foreground', e.target.value)}
-                className="flex-grow bg-[#1F2937] border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
+                className="flex-grow bg-slate-800 border border-[#374151] px-3 py-2 rounded-lg text-xs font-mono text-white text-center"
               />
             </div>
           </div>
@@ -321,7 +321,7 @@ export const ThemeEditor = () => {
         <button
           onClick={handleSave}
           disabled={loading}
-          className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
+          className="px-6 py-3 bg-cyan-500 hover:bg-accent text-black font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
         >
           {loading ? 'Saving Layout...' : 'Save Color Theme'}
         </button>

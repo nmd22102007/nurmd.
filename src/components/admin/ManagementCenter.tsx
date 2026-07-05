@@ -35,7 +35,7 @@ export const ManagementCenter = ({ onSelectSection }: { onSelectSection: (id: st
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8"
     >
-      <div className="bg-[#0B0B0F]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1F2937]/50">
+      <div className="bg-navy-dark/80 backdrop-blur-md p-8 rounded-3xl border border-slate-800/50">
         <h2 className="text-2xl font-black mb-2">Management Center</h2>
         <p className="text-gray-400 text-sm max-w-xl mb-8">
           Manage and update every section of your website from one place.
@@ -43,11 +43,11 @@ export const ManagementCenter = ({ onSelectSection }: { onSelectSection: (id: st
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {managementCategories.map((cat) => (
-            <div key={cat.id} className="bg-black/30 border border-[#1F2937]/50 rounded-2xl p-6 hover:border-cyan-400/30 transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-cyan-400/5 flex items-center justify-center mb-4 text-cyan-400">
+            <div key={cat.id} className="bg-black/30 border border-slate-800/50 rounded-2xl p-6 hover:border-accent/30 transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-accent/5 flex items-center justify-center mb-4 text-accent">
                 <cat.icon className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-white mb-1 group-hover:text-cyan-300 transition-colors">{cat.title}</h3>
+              <h3 className="font-bold text-white mb-1 group-hover:text-accent transition-colors">{cat.title}</h3>
               <p className="text-gray-500 text-xs mb-4">{cat.description}</p>
               <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-6">
                 <span>{cat.count} items</span>
@@ -55,7 +55,7 @@ export const ManagementCenter = ({ onSelectSection }: { onSelectSection: (id: st
               </div>
               <button 
                 onClick={() => onSelectSection(cat.id)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white/5 hover:bg-cyan-400 hover:text-black rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white/5 hover:bg-accent hover:text-black rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
               >
                 Manage {cat.title}
                 <ChevronRight className="w-3 h-3" />

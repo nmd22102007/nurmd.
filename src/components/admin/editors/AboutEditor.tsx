@@ -192,7 +192,7 @@ export const AboutEditor = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column: Top Level Copy, Hero Image, and Contact info */}
         <div className="space-y-6">
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider border-b border-white/5 pb-2">Page Header Copy</h5>
             <div className="space-y-2">
               <label className="text-xs text-gray-400 font-medium">Large Centered Title</label>
@@ -200,7 +200,7 @@ export const AboutEditor = () => {
                 type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                 placeholder="About me"
               />
             </div>
@@ -209,13 +209,13 @@ export const AboutEditor = () => {
               <textarea
                 value={subtitle}
                 onChange={e => setSubtitle(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs h-20 resize-none"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs h-20 resize-none"
                 placeholder="A deeper look..."
               />
             </div>
           </div>
 
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider border-b border-white/5 pb-2">Hero Narrative</h5>
             <div className="space-y-2">
               <label className="text-xs text-gray-400 font-medium flex items-center gap-1">
@@ -225,10 +225,10 @@ export const AboutEditor = () => {
                 type="text"
                 value={imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-gray-300"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-gray-300"
                 placeholder="https://..."
               />
-              <div className="h-28 w-full rounded-lg overflow-hidden border border-[#222] mt-2 bg-[#111]">
+              <div className="h-28 w-full rounded-lg overflow-hidden border border-slate-800 mt-2 bg-navy">
                 {imageUrl && <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />}
               </div>
             </div>
@@ -238,7 +238,7 @@ export const AboutEditor = () => {
                 type="text"
                 value={heading}
                 onChange={e => setHeading(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                 placeholder="Crafting Digital Realities"
               />
             </div>
@@ -247,7 +247,7 @@ export const AboutEditor = () => {
               <textarea
                 value={description1}
                 onChange={e => setDescription1(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs h-24 resize-none"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs h-24 resize-none"
                 placeholder="Enter introduction..."
               />
             </div>
@@ -256,13 +256,13 @@ export const AboutEditor = () => {
               <textarea
                 value={description2}
                 onChange={e => setDescription2(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs h-24 resize-none"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs h-24 resize-none"
                 placeholder="Enter philosophy..."
               />
             </div>
           </div>
 
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider border-b border-white/5 pb-2">Narrative Metadata & Contact</h5>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -273,7 +273,7 @@ export const AboutEditor = () => {
                   type="text"
                   value={addressMain}
                   onChange={e => setAddressMain(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="Dhaka, Bangladesh"
                 />
               </div>
@@ -283,7 +283,7 @@ export const AboutEditor = () => {
                   type="text"
                   value={addressSub}
                   onChange={e => setAddressSub(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="Ghatail, Tangail"
                 />
               </div>
@@ -296,7 +296,7 @@ export const AboutEditor = () => {
                 type="email"
                 value={emailText}
                 onChange={e => setEmailText(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                 placeholder="contact@toxichome.top"
               />
             </div>
@@ -309,7 +309,7 @@ export const AboutEditor = () => {
                   type="text"
                   value={phone1}
                   onChange={e => setPhone1(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="+880 13283-29322"
                 />
               </div>
@@ -319,7 +319,7 @@ export const AboutEditor = () => {
                   type="text"
                   value={phone2}
                   onChange={e => setPhone2(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="+880 17346-92372"
                 />
               </div>
@@ -330,7 +330,7 @@ export const AboutEditor = () => {
         {/* Right Column: Statistics, Skills, Timeline, and CTA */}
         <div className="space-y-6">
           {/* Statistics Grid */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
               <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
                 <Trophy className="w-4 h-4" /> Portfolio Statistics
@@ -349,14 +349,14 @@ export const AboutEditor = () => {
                     type="text"
                     value={stat.value}
                     onChange={e => handleUpdateField(statistics, setStatistics, i, 'value', e.target.value)}
-                    className="w-1/3 bg-[#111] border border-[#222] p-2 rounded text-xs text-emerald-300 font-mono font-bold"
+                    className="w-1/3 bg-navy border border-slate-800 p-2 rounded text-xs text-emerald-300 font-mono font-bold"
                     placeholder="Val (e.g. 5+)"
                   />
                   <input
                     type="text"
                     value={stat.label}
                     onChange={e => handleUpdateField(statistics, setStatistics, i, 'label', e.target.value)}
-                    className="flex-1 bg-[#111] border border-[#222] p-2 rounded text-xs text-gray-300"
+                    className="flex-1 bg-navy border border-slate-800 p-2 rounded text-xs text-gray-300"
                     placeholder="Label description"
                   />
                   <button
@@ -374,7 +374,7 @@ export const AboutEditor = () => {
           </div>
 
           {/* Interactive Skills */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
               <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
                 <Briefcase className="w-4 h-4" /> Skills & Progress
@@ -393,7 +393,7 @@ export const AboutEditor = () => {
                     type="text"
                     value={skill.name}
                     onChange={e => handleUpdateField(skills, setSkills, i, 'name', e.target.value)}
-                    className="flex-1 bg-[#111] border border-[#222] p-2 rounded text-xs text-white"
+                    className="flex-1 bg-navy border border-slate-800 p-2 rounded text-xs text-white"
                     placeholder="Skill Tag Name"
                   />
                   <input
@@ -402,7 +402,7 @@ export const AboutEditor = () => {
                     max="100"
                     value={skill.percentage}
                     onChange={e => handleUpdateField(skills, setSkills, i, 'percentage', parseInt(e.target.value) || 0)}
-                    className="w-20 bg-[#111] border border-[#222] p-2 rounded text-xs text-center font-mono font-bold text-emerald-300"
+                    className="w-20 bg-navy border border-slate-800 p-2 rounded text-xs text-center font-mono font-bold text-emerald-300"
                     placeholder="90"
                   />
                   <button
@@ -420,7 +420,7 @@ export const AboutEditor = () => {
           </div>
 
           {/* Timeline Milestones */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
               <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
                 <FileText className="w-4 h-4" /> Timeline Milestones
@@ -449,14 +449,14 @@ export const AboutEditor = () => {
                       type="text"
                       value={item.year}
                       onChange={e => handleUpdateField(timeline, setTimeline, i, 'year', e.target.value)}
-                      className="bg-[#111] border border-[#222] p-2 rounded text-xs text-gray-300"
+                      className="bg-navy border border-slate-800 p-2 rounded text-xs text-gray-300"
                       placeholder="Year / Duration (e.g. 2022-Pres)"
                     />
                     <input
                       type="text"
                       value={item.company}
                       onChange={e => handleUpdateField(timeline, setTimeline, i, 'company', e.target.value)}
-                      className="bg-[#111] border border-[#222] p-2 rounded text-xs text-gray-300"
+                      className="bg-navy border border-slate-800 p-2 rounded text-xs text-gray-300"
                       placeholder="Company"
                     />
                   </div>
@@ -464,13 +464,13 @@ export const AboutEditor = () => {
                     type="text"
                     value={item.role}
                     onChange={e => handleUpdateField(timeline, setTimeline, i, 'role', e.target.value)}
-                    className="w-full bg-[#111] border border-[#222] p-2 rounded text-xs text-white"
+                    className="w-full bg-navy border border-slate-800 p-2 rounded text-xs text-white"
                     placeholder="Role Title"
                   />
                   <textarea
                     value={item.description}
                     onChange={e => handleUpdateField(timeline, setTimeline, i, 'description', e.target.value)}
-                    className="w-full bg-[#111] border border-[#222] p-2 rounded text-xs text-gray-300 h-16 resize-none"
+                    className="w-full bg-navy border border-slate-800 p-2 rounded text-xs text-gray-300 h-16 resize-none"
                     placeholder="Milestone outline or contributions..."
                   />
                 </div>
@@ -482,7 +482,7 @@ export const AboutEditor = () => {
           </div>
 
           {/* Quick Connect / CTA Settings */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider border-b border-white/5 pb-2">CTA & Action Controls</h5>
             <div className="space-y-2">
               <label className="text-xs text-gray-400 font-medium">CTA Headline Accent</label>
@@ -490,7 +490,7 @@ export const AboutEditor = () => {
                 type="text"
                 value={ctaHeadline}
                 onChange={e => setCtaHeadline(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                 placeholder="Let's connect there"
               />
             </div>
@@ -503,7 +503,7 @@ export const AboutEditor = () => {
                   type="text"
                   value={ctaButtonText}
                   onChange={e => setCtaButtonText(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="Let's Connect"
                 />
               </div>
@@ -513,7 +513,7 @@ export const AboutEditor = () => {
                   type="text"
                   value={ctaButtonUrl}
                   onChange={e => setCtaButtonUrl(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-zinc-300"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-zinc-300"
                   placeholder="/contact"
                 />
               </div>

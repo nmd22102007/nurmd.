@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Github, Twitter, Linkedin, Mail, MapPin, ArrowRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -37,6 +38,8 @@ const defaultFooterData: FooterData = {
 };
 
 export const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [data, setData] = useState<FooterData>(() => {
     const cached = localStorage.getItem('siteConfig_footer');
     if (cached) {
@@ -109,9 +112,26 @@ export const Footer = () => {
           <div className="flex flex-col items-start md:items-end space-y-8">
             <motion.a
               href="/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                if (location.pathname === '/contact') {
+                  const form = document.getElementById('contact-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                    const subjectInput = document.getElementById('subject');
+                    if (subjectInput) {
+                      setTimeout(() => subjectInput.focus(), 500);
+                    }
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                } else {
+                  navigate('/contact', { state: { scrollToForm: true } });
+                }
+              }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="group relative flex items-center bg-white/[0.03] border border-white/5 hover:bg-[#4ade80] hover:border-[#4ade80] rounded-full transition-all duration-300 backdrop-blur-md w-[170px] h-[56px] overflow-hidden"
+              className="group relative cursor-pointer flex items-center bg-white/[0.03] border border-white/5 hover:bg-accent hover:border-accent rounded-full transition-all duration-300 backdrop-blur-md w-[170px] h-[56px] overflow-hidden"
             >
               {/* Icon Container */}
               <div className="absolute left-2 w-10 h-10 bg-[#1a1a1a] rounded-full flex items-center justify-center z-10 transition-all duration-500 group-hover:left-[122px]">
@@ -121,10 +141,10 @@ export const Footer = () => {
               {/* Text Container */}
               <div className="absolute inset-0 flex flex-col justify-center transition-all duration-500 pl-14 pr-2 group-hover:pl-2 group-hover:pr-14 text-white">
                 <div className="relative h-5 overflow-hidden w-full">
-                  <span className="absolute inset-0 flex items-center justify-center text-white font-medium text-sm transition-transform duration-500 group-hover:-translate-y-full">
+                  <span className="absolute inset-0 flex items-center justify-center font-medium text-sm transition-transform duration-500 group-hover:-translate-x-full">
                     Let's Connect
                   </span>
-                  <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm translate-y-full transition-transform duration-500 group-hover:translate-y-0">
+                  <span className="absolute inset-0 flex items-center justify-center font-bold text-sm translate-x-full transition-transform duration-500 group-hover:translate-x-0 group-hover:text-black">
                     Chat Now
                   </span>
                 </div>

@@ -150,7 +150,7 @@ export const HeroEditor = () => {
       {/* Header Info */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-6">
         <div>
-          <h4 className="text-xl font-bold flex items-center gap-2 text-cyan-400">
+          <h4 className="text-xl font-bold flex items-center gap-2 text-accent">
             <Sparkles className="w-5 h-5 animate-pulse" />
             Vibrant Hero Manager
           </h4>
@@ -161,7 +161,7 @@ export const HeroEditor = () => {
         <button
           onClick={handleSaveAll}
           disabled={loading}
-          className="w-full sm:w-auto px-6 py-3 bg-cyan-400 hover:bg-cyan-300 text-black font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] cursor-pointer"
+          className="w-full sm:w-auto px-6 py-3 bg-accent hover:bg-cyan-300 text-black font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] cursor-pointer"
         >
           <Save className="w-4 h-4" />
           {loading ? 'Publishing...' : 'Publish Hero'}
@@ -169,7 +169,7 @@ export const HeroEditor = () => {
       </div>
 
       {statusMessage && (
-        <div className={`p-4 rounded-xl text-xs font-semibold ${statusMessage.type === 'success' ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-300' : 'bg-rose-500/10 border border-rose-500/20 text-rose-300'}`}>
+        <div className={`p-4 rounded-xl text-xs font-semibold ${statusMessage.type === 'success' ? 'bg-cyan-500/10 border border-cyan-500/20 text-accent' : 'bg-rose-500/10 border border-rose-500/20 text-rose-300'}`}>
           {statusMessage.text}
         </div>
       )}
@@ -179,8 +179,8 @@ export const HeroEditor = () => {
         
         {/* Left Side: General Info, Image, buttons */}
         <div className="space-y-6">
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
-            <h5 className="text-sm font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
+            <h5 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
               <Compass className="w-4 h-4" /> Landing Copy
             </h5>
             
@@ -190,7 +190,7 @@ export const HeroEditor = () => {
                 type="text"
                 value={badge}
                 onChange={e => setBadge(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs font-semibold text-cyan-300"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs font-semibold text-accent"
                 placeholder="Designing the Future"
               />
             </div>
@@ -202,7 +202,7 @@ export const HeroEditor = () => {
                   type="text"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="Web Designer"
                 />
               </div>
@@ -212,7 +212,7 @@ export const HeroEditor = () => {
                   type="text"
                   value={titleAccent}
                   onChange={e => setTitleAccent(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-cyan-300 font-bold"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-accent font-bold"
                   placeholder="& Developer"
                 />
               </div>
@@ -223,15 +223,15 @@ export const HeroEditor = () => {
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs h-28 resize-none text-slate-300 leading-relaxed"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs h-28 resize-none text-slate-300 leading-relaxed"
                 placeholder="I design and develop..."
               />
             </div>
           </div>
 
           {/* Action Call to Buttons */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
-            <h5 className="text-sm font-bold text-cyan-400 uppercase tracking-wider">CTA Buttons</h5>
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
+            <h5 className="text-sm font-bold text-accent uppercase tracking-wider">CTA Buttons</h5>
             
             {/* Primary CTA */}
             <div className="grid grid-cols-2 gap-4 border-b border-white/5 pb-4">
@@ -241,7 +241,7 @@ export const HeroEditor = () => {
                   type="text"
                   value={ctaText}
                   onChange={e => setCtaText(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-emerald-300"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-emerald-300"
                   placeholder="Explore Portfolio"
                 />
               </div>
@@ -251,7 +251,7 @@ export const HeroEditor = () => {
                   type="text"
                   value={ctaUrl}
                   onChange={e => setCtaUrl(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-gray-400 font-mono"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-gray-400 font-mono"
                   placeholder="#portfolio"
                 />
               </div>
@@ -265,7 +265,7 @@ export const HeroEditor = () => {
                   type="text"
                   value={secondaryCtaText}
                   onChange={e => setSecondaryCtaText(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs"
                   placeholder="Let's Connect"
                 />
               </div>
@@ -275,7 +275,7 @@ export const HeroEditor = () => {
                   type="text"
                   value={secondaryCtaUrl}
                   onChange={e => setSecondaryCtaUrl(e.target.value)}
-                  className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-gray-400 font-mono"
+                  className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-gray-400 font-mono"
                   placeholder="#contact"
                 />
               </div>
@@ -283,8 +283,8 @@ export const HeroEditor = () => {
           </div>
 
           {/* Interactive Image */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
-            <h5 className="text-sm font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
+            <h5 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
               <ImageIcon className="w-4 h-4" /> Hero Dynamic Image
             </h5>
             <div className="space-y-2">
@@ -293,20 +293,20 @@ export const HeroEditor = () => {
                 type="text"
                 value={imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
-                className="w-full bg-[#111] border border-[#222] p-3 rounded-lg text-xs text-gray-300 font-mono"
+                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-gray-300 font-mono"
                 placeholder="https://..."
               />
               <p className="text-[10px] text-gray-500">Provide an image URL to enable a magnificent side-by-side split viewport. Recommended sizes: standard portrait/square renders.</p>
               
               {imageUrl ? (
-                <div className="relative h-44 w-full rounded-xl overflow-hidden border border-[#222] mt-2 group">
+                <div className="relative h-44 w-full rounded-xl overflow-hidden border border-slate-800 mt-2 group">
                   <img src={imageUrl} alt="Hero Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-                    <span className="text-[9px] font-mono uppercase bg-black/60 px-2 py-1 rounded text-cyan-400">Live Preview</span>
+                    <span className="text-[9px] font-mono uppercase bg-black/60 px-2 py-1 rounded text-accent">Live Preview</span>
                   </div>
                 </div>
               ) : (
-                <div className="h-28 w-full rounded-xl bg-black/20 border border-dashed border-[#222] flex flex-col items-center justify-center text-gray-500 text-xs">
+                <div className="h-28 w-full rounded-xl bg-black/20 border border-dashed border-slate-800 flex flex-col items-center justify-center text-gray-500 text-xs">
                   <ImageIcon className="w-6 h-6 mb-1 opacity-40" />
                   No image URL specified. Hero will run on centered, full-width mode.
                 </div>
@@ -318,14 +318,14 @@ export const HeroEditor = () => {
         {/* Right Side: Floating Pills and Statistics counters */}
         <div className="space-y-6">
           {/* Highlight Pills */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
-              <h5 className="text-sm font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+              <h5 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
                 <Layers className="w-4 h-4" /> Highlight Badges
               </h5>
               <button
                 onClick={handleAddPill}
-                className="text-xs text-cyan-400 hover:text-white flex items-center gap-1 transition-all"
+                className="text-xs text-accent hover:text-white flex items-center gap-1 transition-all"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Badge
               </button>
@@ -341,7 +341,7 @@ export const HeroEditor = () => {
                     type="text"
                     value={pill}
                     onChange={e => handleUpdatePill(idx, e.target.value)}
-                    className="flex-1 bg-[#111] border border-[#222] p-2 rounded text-xs text-white"
+                    className="flex-1 bg-navy border border-slate-800 p-2 rounded text-xs text-white"
                     placeholder="E.g. Creative Layouts"
                   />
                   <button
@@ -359,14 +359,14 @@ export const HeroEditor = () => {
           </div>
 
           {/* Counting Stats Counters */}
-          <div className="bg-slate-900/30 border border-[#1F2937]/50 p-6 rounded-2xl space-y-4">
+          <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
-              <h5 className="text-sm font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+              <h5 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
                 <ListPlus className="w-4 h-4" /> Counting Stats Counters
               </h5>
               <button
                 onClick={handleAddStat}
-                className="text-xs text-cyan-400 hover:text-white flex items-center gap-1 transition-all"
+                className="text-xs text-accent hover:text-white flex items-center gap-1 transition-all"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Counter
               </button>
@@ -378,7 +378,7 @@ export const HeroEditor = () => {
               {stats.map((stat, idx) => (
                 <div key={idx} className="bg-black/40 p-4 rounded-xl border border-white/5 space-y-3 relative">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-mono text-cyan-300 font-bold">Counter Block #{idx + 1}</span>
+                    <span className="text-xs font-mono text-accent font-bold">Counter Block #{idx + 1}</span>
                     <button
                       onClick={() => handleRemoveStat(idx)}
                       className="text-rose-400 hover:text-rose-300 p-1.5 rounded hover:bg-rose-500/10 transition-all"
@@ -393,7 +393,7 @@ export const HeroEditor = () => {
                         type="text"
                         value={stat.value}
                         onChange={e => handleUpdateStat(idx, 'value', e.target.value)}
-                        className="w-full bg-[#111] border border-[#222] p-2 rounded text-xs text-cyan-300 font-mono font-bold"
+                        className="w-full bg-navy border border-slate-800 p-2 rounded text-xs text-accent font-mono font-bold"
                         placeholder="E.g. 50+"
                       />
                     </div>
@@ -403,7 +403,7 @@ export const HeroEditor = () => {
                         type="text"
                         value={stat.label}
                         onChange={e => handleUpdateStat(idx, 'label', e.target.value)}
-                        className="w-full bg-[#111] border border-[#222] p-2 rounded text-xs text-gray-300"
+                        className="w-full bg-navy border border-slate-800 p-2 rounded text-xs text-gray-300"
                         placeholder="E.g. Projects Completed"
                       />
                     </div>
@@ -422,7 +422,7 @@ export const HeroEditor = () => {
         <button
           onClick={handleSaveAll}
           disabled={loading}
-          className="px-8 py-4 bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold rounded-2xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-[0_0_25px_rgba(34,211,238,0.4)] cursor-pointer"
+          className="px-8 py-4 bg-accent hover:bg-cyan-300 text-black font-extrabold rounded-2xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-[0_0_25px_rgba(34,211,238,0.4)] cursor-pointer"
         >
           <Save className="w-4 h-4" />
           {loading ? 'Saving Changes...' : 'Publish Hero Section'}

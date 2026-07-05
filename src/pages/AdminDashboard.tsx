@@ -10,7 +10,8 @@ import {
   query, 
   orderBy, 
   limit,
-  serverTimestamp
+  serverTimestamp,
+  onSnapshot
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { Layout } from '../components/Layout';
@@ -164,6 +165,70 @@ export const AdminDashboard = () => {
   });
 
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
+  const [showReplyBox, setShowReplyBox] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const chatEndRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setShowReplyBox(false);
+    setReplyText("");
+  }, [selectedInquiry?.id]);
+
+  useEffect(() => {
+    if (showReplyBox) {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedInquiry?.replies, showReplyBox]);
+
+  const playBeep = () => {
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 800;
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      
+      oscillator.start();
+      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+      oscillator.stop(audioCtx.currentTime + 0.1);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleReplyClick = () => {
+    setShowReplyBox(true);
+    playBeep();
+  };
+
+  const handleSendReply = async () => {
+    if (!replyText.trim() || !selectedInquiry) return;
+    
+    try {
+      const updatedReplies = [...(selectedInquiry.replies || []), {
+        text: replyText,
+        sender: 'admin',
+        createdAt: new Date().toISOString()
+      }];
+
+      await setDoc(doc(db, 'inquiries', selectedInquiry.id), {
+        replies: updatedReplies,
+        status: 'read'
+      }, { merge: true });
+
+      setNotifications(prev => ["Reply successfully sent.", ...prev]);
+      setReplyText("");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send reply");
+    }
+  };
+
   const [notifications, setNotifications] = useState<string[]>([
     "Security check: users table locked against shadow updates",
     "Admin profile provisioned for " + (user?.email || "nurmd"),
@@ -480,6 +545,26 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
   useEffect(() => {
     fetchAllData();
+
+    // Subscribe to inquiries in real-time
+    const unsubscribeInquiries = onSnapshot(
+      query(collection(db, 'inquiries'), orderBy('createdAt', 'desc')),
+      (snapshot) => {
+        const updatedInquiries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setInquiries(updatedInquiries);
+        setStats(prev => ({
+          ...prev,
+          inquiries: Math.max(1, updatedInquiries.length)
+        }));
+      },
+      (err) => {
+        console.error("Realtime inquiry subscription error:", err);
+      }
+    );
+
+    return () => {
+      unsubscribeInquiries();
+    };
   }, []);
 
   // Handlers for Project CRUD
@@ -690,27 +775,27 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
   return (
     <Layout hideNavbar={true} hideFooter={true}>
-      <div className="min-h-screen bg-[#0B0B0F] text-white font-sans relative overflow-hidden pb-20">
+      <div className="min-h-screen bg-navy-dark text-white font-sans relative overflow-hidden pb-20">
         
         {/* Animated Background Glowing Accents */}
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[150px] animate-pulse pointer-events-none" />
         <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none" />
         
         {/* Modern Sticky Blur Navbar */}
-        <nav className="sticky top-0 z-40 bg-[#0B0B0F]/70 backdrop-blur-md border-b border-[#1F2937]/50 px-6 py-4">
+        <nav className="sticky top-0 z-40 bg-navy-dark/70 backdrop-blur-md border-b border-slate-800/50 px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-8">
               <Link to="/" className="text-lg font-black tracking-widest text-white hover:opacity-80 transition-opacity">
-                nurmd<span className="text-cyan-400">.</span>
+                nurmd<span className="text-accent">.</span>
               </Link>
               
               {/* Desktop Center Navigation */}
-              <div className="hidden md:flex items-center space-x-1.5 bg-black/40 p-1 rounded-full border border-[#1F2937]/40">
+              <div className="hidden md:flex items-center space-x-1.5 bg-black/40 p-1 rounded-full border border-slate-800/40">
                 <button
                   onClick={() => setActiveTab('overview')}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all ${
                     activeTab === 'overview' 
-                      ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20' 
+                      ? 'bg-accent/10 text-accent border border-accent/20' 
                       : 'text-gray-400 hover:text-white border border-transparent'
                   }`}
                 >
@@ -720,7 +805,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   onClick={() => setActiveTab('management')}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all ${
                     activeTab === 'management' 
-                      ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20' 
+                      ? 'bg-accent/10 text-accent border border-accent/20' 
                       : 'text-gray-400 hover:text-white border border-transparent'
                   }`}
                 >
@@ -730,7 +815,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   onClick={() => setActiveTab('projects')}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all ${
                     activeTab === 'projects' || activeTab === 'posts'
-                      ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20' 
+                      ? 'bg-accent/10 text-accent border border-accent/20' 
                       : 'text-gray-400 hover:text-white border border-transparent'
                   }`}
                 >
@@ -740,7 +825,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   onClick={() => setActiveTab('users')}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all ${
                     activeTab === 'users' 
-                      ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20' 
+                      ? 'bg-accent/10 text-accent border border-accent/20' 
                       : 'text-gray-400 hover:text-white border border-transparent'
                   }`}
                 >
@@ -750,7 +835,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   onClick={() => setActiveTab('inquiries')}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all ${
                     activeTab === 'inquiries' 
-                      ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20' 
+                      ? 'bg-accent/10 text-accent border border-accent/20' 
                       : 'text-gray-400 hover:text-white border border-transparent'
                   }`}
                 >
@@ -760,7 +845,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   onClick={() => setActiveTab('server')}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                     activeTab === 'server' 
-                      ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20' 
+                      ? 'bg-accent/10 text-accent border border-accent/20' 
                       : 'text-gray-400 hover:text-white border border-transparent'
                   }`}
                 >
@@ -775,7 +860,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                 to="/profile" 
                 className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 p-[1.5px] hover:scale-105 transition-transform"
               >
-                <div className="w-full h-full rounded-full bg-[#0B0B0F] flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full rounded-full bg-navy-dark flex items-center justify-center overflow-hidden">
                   {profile?.avatarUrl && (
                     <img 
                       src={profile.avatarUrl} 
@@ -787,7 +872,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
               </Link>
               <button 
                 onClick={() => auth.signOut()}
-                className="text-xs hover:text-[#FF4A4A] text-gray-500 font-bold uppercase tracking-wider transition-colors"
+                className="text-xs hover:text-red-500 text-gray-500 font-bold uppercase tracking-wider transition-colors"
                 title="Secure logout"
               >
                 Log Out
@@ -797,40 +882,40 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
         </nav>
 
         {/* Responsive Mobile navigation tabs drawer */}
-        <div className="md:hidden flex overflow-x-auto gap-2 px-6 py-3 border-b border-[#1F2937]/30 bg-black/25">
+        <div className="md:hidden flex overflow-x-auto gap-2 px-6 py-3 border-b border-slate-800/30 bg-black/25">
           <button 
             onClick={() => setActiveTab('overview')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'overview' ? 'bg-cyan-400/15 text-cyan-300' : 'text-gray-400'}`}
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'overview' ? 'bg-accent/15 text-accent' : 'text-gray-400'}`}
           >
             Dashboard
           </button>
           <button 
             onClick={() => setActiveTab('projects')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'projects' ? 'bg-cyan-400/15 text-cyan-300' : 'text-gray-400'}`}
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'projects' ? 'bg-accent/15 text-accent' : 'text-gray-400'}`}
           >
             Projects
           </button>
           <button 
             onClick={() => setActiveTab('posts')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'posts' ? 'bg-cyan-400/15 text-cyan-300' : 'text-gray-400'}`}
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'posts' ? 'bg-accent/15 text-accent' : 'text-gray-400'}`}
           >
             Blog
           </button>
           <button 
             onClick={() => setActiveTab('users')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'users' ? 'bg-cyan-400/15 text-cyan-300' : 'text-gray-400'}`}
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'users' ? 'bg-accent/15 text-accent' : 'text-gray-400'}`}
           >
             Users
           </button>
           <button 
             onClick={() => setActiveTab('inquiries')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'inquiries' ? 'bg-cyan-400/15 text-cyan-300' : 'text-gray-400'}`}
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'inquiries' ? 'bg-accent/15 text-accent' : 'text-gray-400'}`}
           >
             Messages
           </button>
           <button 
             onClick={() => setActiveTab('server')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'server' ? 'bg-cyan-400/15 text-cyan-300' : 'text-gray-400'}`}
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${activeTab === 'server' ? 'bg-accent/15 text-accent' : 'text-gray-400'}`}
           >
             Server
           </button>
@@ -875,7 +960,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
             <div className="flex flex-wrap gap-3">
               <Link 
                 to="/" 
-                className="px-5 py-2.5 bg-[#1F2937] hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(34,211,238,0.25)] text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
+                className="px-5 py-2.5 bg-slate-800 hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(34,211,238,0.25)] text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
               >
                 <span>View Website</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -893,7 +978,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                 className="grid grid-cols-1 md:grid-cols-4 gap-6"
               >
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-black/30 border border-[#1F2937]/30 h-32 rounded-3xl animate-pulse p-6">
+                  <div key={i} className="bg-black/30 border border-slate-800/30 h-32 rounded-3xl animate-pulse p-6">
                     <div className="w-1/3 bg-white/5 h-4 rounded mb-4" />
                     <div className="w-2/3 bg-white/10 h-8 rounded" />
                   </div>
@@ -909,11 +994,11 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       key="section-editor"
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="bg-[#0B0B0F]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1F2937]/50"
+                      className="bg-navy-dark/80 backdrop-blur-md p-8 rounded-3xl border border-slate-800/50"
                     >
                       <button 
                         onClick={() => setEditingSection(null)}
-                        className="mb-6 text-gray-400 hover:text-cyan-400 flex items-center gap-2 text-sm"
+                        className="mb-6 text-gray-400 hover:text-accent flex items-center gap-2 text-sm"
                       >
                         ← Back to Management Center
                       </button>
@@ -938,45 +1023,45 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     
                     {/* 4 Statistics Cards in One Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-[#1F2937]/45 hover:border-cyan-400/30 group transition-all duration-300 relative overflow-hidden">
-                        <div className="absolute top-4 right-4 text-[#1F2937] group-hover:text-cyan-400/10 pointer-events-none transition-colors">
+                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-slate-800/45 hover:border-accent/30 group transition-all duration-300 relative overflow-hidden">
+                        <div className="absolute top-4 right-4 text-slate-800 group-hover:text-accent/10 pointer-events-none transition-colors">
                           <FolderKanban className="w-12 h-12" />
                         </div>
                         <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Portfolio Projects</p>
-                        <h3 className="text-4xl font-extrabold text-white group-hover:text-cyan-400 transition-colors mb-1">
+                        <h3 className="text-4xl font-extrabold text-white group-hover:text-accent transition-colors mb-1">
                           {stats.projects}
                         </h3>
                         <p className="text-gray-500 text-[11px] font-mono">Total creative works</p>
                       </div>
 
-                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-[#1F2937]/45 hover:border-cyan-400/30 group transition-all duration-300 relative overflow-hidden">
-                        <div className="absolute top-4 right-4 text-[#1F2937] group-hover:text-cyan-400/10 pointer-events-none transition-colors">
+                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-slate-800/45 hover:border-accent/30 group transition-all duration-300 relative overflow-hidden">
+                        <div className="absolute top-4 right-4 text-slate-800 group-hover:text-accent/10 pointer-events-none transition-colors">
                           <MessageSquare className="w-12 h-12" />
                         </div>
                         <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Active Threads</p>
-                        <h3 className="text-4xl font-extrabold text-white group-hover:text-cyan-400 transition-colors mb-1">
+                        <h3 className="text-4xl font-extrabold text-white group-hover:text-accent transition-colors mb-1">
                           {stats.inquiries}
                         </h3>
                         <p className="text-gray-500 text-[11px] font-mono">Client conversations</p>
                       </div>
 
-                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-[#1F2937]/45 hover:border-cyan-400/30 group transition-all duration-300 relative overflow-hidden">
-                        <div className="absolute top-4 right-4 text-[#1F2937] group-hover:text-cyan-400/10 pointer-events-none transition-colors">
+                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-slate-800/45 hover:border-accent/30 group transition-all duration-300 relative overflow-hidden">
+                        <div className="absolute top-4 right-4 text-slate-800 group-hover:text-accent/10 pointer-events-none transition-colors">
                           <User className="w-12 h-12" />
                         </div>
                         <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Platform Users</p>
-                        <h3 className="text-4xl font-extrabold text-white group-hover:text-cyan-400 transition-colors mb-1">
+                        <h3 className="text-4xl font-extrabold text-white group-hover:text-accent transition-colors mb-1">
                           {stats.users}
                         </h3>
                         <p className="text-gray-500 text-[11px] font-mono">Registered accounts</p>
                       </div>
 
-                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-[#1F2937]/45 hover:border-cyan-400/30 group transition-all duration-300 relative overflow-hidden">
-                        <div className="absolute top-4 right-4 text-[#1F2937] group-hover:text-cyan-400/10 pointer-events-none transition-colors">
+                      <div className="bg-gradient-to-br from-black/60 to-[#0B0B0F] backdrop-blur-md p-6 rounded-3xl border border-slate-800/45 hover:border-accent/30 group transition-all duration-300 relative overflow-hidden">
+                        <div className="absolute top-4 right-4 text-slate-800 group-hover:text-accent/10 pointer-events-none transition-colors">
                           <Shield className="w-12 h-12" />
                         </div>
                         <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Service Offerings</p>
-                        <h3 className="text-4xl font-extrabold text-white group-hover:text-cyan-400 transition-colors mb-1">
+                        <h3 className="text-4xl font-extrabold text-white group-hover:text-accent transition-colors mb-1">
                           {stats.services}
                         </h3>
                         <p className="text-gray-500 text-[11px] font-mono">Active capabilities</p>
@@ -990,21 +1075,21 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       <div className="lg:col-span-2 space-y-8">
                         
                         {/* Elegant custom-styled SVG dashboard charts section */}
-                        <div className="bg-[#0B0B0F]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1F2937]/50 relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-400/5 rounded-full blur-3xl pointer-events-none" />
+                        <div className="bg-navy-dark/80 backdrop-blur-md p-8 rounded-3xl border border-slate-800/50 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
                           <div className="flex justify-between items-center mb-6">
                             <div>
-                              <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest font-black">PLATFORM TRAFFIC</p>
+                              <p className="text-xs font-mono text-accent uppercase tracking-widest font-black">PLATFORM TRAFFIC</p>
                               <h3 className="text-xl font-black">Performance Diagnostics</h3>
                             </div>
                             <div className="flex items-center gap-4 text-xs font-mono">
-                              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-cyan-400" /> Reads</span>
+                              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-accent" /> Reads</span>
                               <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Latency (ms)</span>
                             </div>
                           </div>
 
                           {/* Beautiful SVG Line Chart Graphic representing data queries */}
-                          <div className="w-full h-44 relative bg-black/30 rounded-2xl border border-[#1F2937]/30 flex flex-col justify-end p-4">
+                          <div className="w-full h-44 relative bg-black/30 rounded-2xl border border-slate-800/30 flex flex-col justify-end p-4">
                             <span className="absolute left-4 top-2 text-[10px] text-gray-500 font-mono">Query Ops (24h)</span>
                             <svg className="w-full h-[70%]" viewBox="0 0 100 30" preserveAspectRatio="none">
                               <defs>
@@ -1036,15 +1121,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                           </div>
 
                           <div className="grid grid-cols-3 gap-4 mt-6 text-center">
-                            <div className="bg-black/20 p-4 rounded-xl border border-[#1F2937]/30">
+                            <div className="bg-black/20 p-4 rounded-xl border border-slate-800/30">
                               <span className="text-[10px] text-gray-400 block font-mono uppercase tracking-wider mb-0.5">Database Reads</span>
-                              <span className="text-xl font-bold font-mono text-cyan-300">1,942</span>
+                              <span className="text-xl font-bold font-mono text-accent">1,942</span>
                             </div>
-                            <div className="bg-black/20 p-4 rounded-xl border border-[#1F2937]/30">
+                            <div className="bg-black/20 p-4 rounded-xl border border-slate-800/30">
                               <span className="text-[10px] text-gray-400 block font-mono uppercase tracking-wider mb-0.5">Load Status</span>
                               <span className="text-xl font-bold font-mono text-emerald-400">Green</span>
                             </div>
-                            <div className="bg-black/20 p-4 rounded-xl border border-[#1F2937]/30">
+                            <div className="bg-black/20 p-4 rounded-xl border border-slate-800/30">
                               <span className="text-[10px] text-gray-400 block font-mono uppercase tracking-wider mb-0.5">Edge Location</span>
                               <span className="text-xl font-bold font-mono text-white">APAC-1</span>
                             </div>
@@ -1052,15 +1137,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                         </div>
 
                         {/* Latest Projects Section inside table layout */}
-                        <div className="bg-[#0B0B0F]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1F2937]/50">
+                        <div className="bg-navy-dark/80 backdrop-blur-md p-8 rounded-3xl border border-slate-800/50">
                           <div className="flex justify-between items-center mb-8">
                             <div>
-                              <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest font-black">WORKSPACE</span>
+                              <span className="text-xs font-mono text-accent uppercase tracking-widest font-black">WORKSPACE</span>
                               <h3 className="text-xl font-black">Featured Projects Registry</h3>
                             </div>
                             <button 
                               onClick={() => setActiveTab('projects')} 
-                              className="text-cyan-400 hover:text-white text-xs font-bold flex items-center transition-colors"
+                              className="text-accent hover:text-white text-xs font-bold flex items-center transition-colors"
                             >
                               <span>Manage Projects</span>
                               <ChevronRight className="w-4 h-4" />
@@ -1070,7 +1155,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                           <div className="overflow-x-auto">
                             <table className="w-full text-left font-sans text-sm">
                               <thead>
-                                <tr className="border-b border-[#1F2937]/40 text-gray-400 text-xs font-bold uppercase tracking-widest bg-white/[0.01]">
+                                <tr className="border-b border-slate-800/40 text-gray-400 text-xs font-bold uppercase tracking-widest bg-white/[0.01]">
                                   <th className="pb-4">Project Name</th>
                                   <th className="pb-4">Type</th>
                                   <th className="pb-4">Featured</th>
@@ -1083,7 +1168,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                   <tr key={p.id} className="hover:bg-white/[0.02] group transition-colors">
                                     <td className="py-4">
                                       <div className="flex items-center space-x-3.5">
-                                        <div className="w-10 h-7 rounded-md border border-[#1F2937]/50 bg-navy-dark/40 overflow-hidden flex-shrink-0">
+                                        <div className="w-10 h-7 rounded-md border border-slate-800/50 bg-navy-dark/40 overflow-hidden flex-shrink-0">
                                           {p.imageUrl && (
                                             <img 
                                               src={p.imageUrl} 
@@ -1092,11 +1177,11 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                             />
                                           )}
                                         </div>
-                                        <span className="font-bold text-white group-hover:text-cyan-300 transition-colors">{p.title}</span>
+                                        <span className="font-bold text-white group-hover:text-accent transition-colors">{p.title}</span>
                                       </div>
                                     </td>
                                     <td className="py-4 text-xs">
-                                      <span className="px-2.5 py-0.5 bg-black text-gray-300 font-medium rounded-full border border-[#1F2937] tracking-wide">
+                                      <span className="px-2.5 py-0.5 bg-black text-gray-300 font-medium rounded-full border border-slate-800 tracking-wide">
                                         {p.category}
                                       </span>
                                     </td>
@@ -1111,7 +1196,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                         href={p.liveUrl} 
                                         target="_blank" 
                                         rel="noopener" 
-                                        className="p-1 px-2.5 bg-white/5 hover:bg-cyan-400/20 rounded text-cyan-300 transition-colors text-xs inline-flex items-center gap-1"
+                                        className="p-1 px-2.5 bg-white/5 hover:bg-accent/20 rounded text-accent transition-colors text-xs inline-flex items-center gap-1"
                                       >
                                         <span>View</span>
                                         <ExternalLink className="w-3 h-3" />
@@ -1130,11 +1215,11 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       <div className="space-y-8">
                         
                         {/* Recent Engagement Sidebar Card */}
-                        <div className="bg-[#0B0B0F]/80 backdrop-blur-md p-6 rounded-3xl border border-[#1F2937]/50 relative overflow-hidden group">
+                        <div className="bg-navy-dark/80 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50 relative overflow-hidden group">
                           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
                           
                           <div className="flex items-center justify-between mb-6">
-                            <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest font-black">REACTIVE CHAT</span>
+                            <span className="text-xs font-mono text-accent uppercase tracking-widest font-black">REACTIVE CHAT</span>
                             <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 font-mono">
                               <span className="w-1 h-1 rounded-full bg-emerald-400 animate-ping" />
                               Active now
@@ -1142,7 +1227,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                           </div>
 
                           <div className="flex items-center gap-3.5 mb-4">
-                            <div className="w-11 h-11 rounded-full bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center overflow-hidden">
+                            <div className="w-11 h-11 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center overflow-hidden">
                               {activeEngagementInquiry.imageUrl && (
                                 <img 
                                   src={activeEngagementInquiry.imageUrl} 
@@ -1157,8 +1242,8 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                             </div>
                           </div>
 
-                          <div className="bg-black/30 p-4 rounded-2xl border border-[#1F2937]/35 mb-6">
-                            <p className="text-[10px] text-cyan-400 font-mono uppercase tracking-wider mb-2 font-black">
+                          <div className="bg-black/30 p-4 rounded-2xl border border-slate-800/35 mb-6">
+                            <p className="text-[10px] text-accent font-mono uppercase tracking-wider mb-2 font-black">
                               SUBJECT: {activeEngagementInquiry.subject}
                             </p>
                             <p className="text-xs text-gray-300 leading-relaxed italic">
@@ -1179,20 +1264,20 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                         </div>
 
                         {/* Robust Live Server Status & System Micro Widget */}
-                        <div className="bg-gradient-to-br from-[#0B0B0F] to-black/25 backdrop-blur-md p-6 rounded-3xl border border-[#1F2937]/50">
-                          <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest font-black mb-4">SYSTEM TELEMETRY</p>
+                        <div className="bg-gradient-to-br from-[#0B0B0F] to-black/25 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
+                          <p className="text-xs font-mono text-accent uppercase tracking-widest font-black mb-4">SYSTEM TELEMETRY</p>
                           
                           <div className="space-y-4">
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-gray-400 flex items-center gap-2">
-                                <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                                <Cpu className="w-3.5 h-3.5 text-accent" />
                                 CPU Core Load
                               </span>
                               <span className="font-mono text-white font-bold">{cpuUsage}%</span>
                             </div>
                             <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
                               <motion.div 
-                                className="h-full bg-cyan-400" 
+                                className="h-full bg-accent" 
                                 animate={{ width: `${cpuUsage}%` }} 
                                 transition={{ type: "spring", stiffness: 80 }}
                               />
@@ -1221,28 +1306,28 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                             </div>
                           </div>
 
-                          <div className="mt-6 pt-4 border-t border-[#1F2937]/30 flex items-center justify-between text-[11px] text-gray-500 font-mono">
+                          <div className="mt-6 pt-4 border-t border-slate-800/30 flex items-center justify-between text-[11px] text-gray-500 font-mono">
                             <span>Uptime: 99.98%</span>
-                            <span className="text-cyan-400 flex items-center gap-1 uppercase font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                            <span className="text-accent flex items-center gap-1 uppercase font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
                               Operational
                             </span>
                           </div>
                         </div>
 
                         {/* Recent Notifications Panel */}
-                        <div className="bg-[#0B0B0F] p-6 rounded-3xl border border-[#1F2937]/50 relative">
+                        <div className="bg-navy-dark p-6 rounded-3xl border border-slate-800/50 relative">
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
-                              <Bell className="w-4 h-4 text-cyan-400" />
+                              <Bell className="w-4 h-4 text-accent" />
                               <span className="text-xs font-mono text-gray-300 font-bold uppercase tracking-wider">EVENT REGISTER</span>
                             </div>
-                            <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                            <span className="w-2 h-2 rounded-full bg-accent" />
                           </div>
 
                           <div className="space-y-3">
                             {notifications.slice(0, 3).map((item, index) => (
-                              <div key={index} className="flex gap-2 text-xs border-l-2 border-cyan-400/20 pl-3 py-1 text-gray-400">
+                              <div key={index} className="flex gap-2 text-xs border-l-2 border-accent/20 pl-3 py-1 text-gray-400">
                                 <span>{item}</span>
                               </div>
                             ))}
@@ -1254,15 +1339,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     </div>
 
                     {/* Blog posts row in single column card representing recent blog posts table */}
-                    <div className="bg-[#0B0B0F]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1F2937]/50 mt-10">
+                    <div className="bg-navy-dark/80 backdrop-blur-md p-8 rounded-3xl border border-slate-800/50 mt-10">
                       <div className="flex justify-between items-center mb-6">
                         <div>
-                          <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest font-black">LOG BOOK</span>
+                          <span className="text-xs font-mono text-accent uppercase tracking-widest font-black">LOG BOOK</span>
                           <h3 className="text-xl font-black">Recent Blog Articles</h3>
                         </div>
                         <button 
                           onClick={() => setActiveTab('posts')}
-                          className="text-cyan-400 hover:text-white text-xs font-bold flex items-center transition-colors"
+                          className="text-accent hover:text-white text-xs font-bold flex items-center transition-colors"
                         >
                           <span>Manage Articles</span>
                           <ChevronRight className="w-4 h-4" />
@@ -1272,7 +1357,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm font-sans">
                           <thead>
-                            <tr className="border-b border-[#1F2937]/40 text-gray-400 text-xs font-bold uppercase tracking-widest bg-white/[0.01]">
+                            <tr className="border-b border-slate-800/40 text-gray-400 text-xs font-bold uppercase tracking-widest bg-white/[0.01]">
                               <th className="pb-4">Article</th>
                               <th className="pb-4">Status</th>
                               <th className="pb-4">Published Date</th>
@@ -1284,7 +1369,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <tr key={post.id} className="hover:bg-white/[0.01] transition-all group">
                                 <td className="py-5">
                                   <div className="flex items-center space-x-4">
-                                    <div className="w-12 h-10 rounded-lg border border-[#1F2937]/50 bg-navy-dark/40 overflow-hidden flex-shrink-0">
+                                    <div className="w-12 h-10 rounded-lg border border-slate-800/50 bg-navy-dark/40 overflow-hidden flex-shrink-0">
                                       {post.image && (
                                         <img 
                                           src={post.image} 
@@ -1294,13 +1379,13 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                       )}
                                     </div>
                                     <div>
-                                      <p className="font-extrabold text-white group-hover:text-cyan-300 transition-colors">{post.title}</p>
+                                      <p className="font-extrabold text-white group-hover:text-accent transition-colors">{post.title}</p>
                                       <p className="text-xs text-gray-500">Category: {post.category || "General"}</p>
                                     </div>
                                   </div>
                                 </td>
                                 <td className="py-5">
-                                  <span className="px-2.5 py-0.5 bg-cyan-400/10 text-cyan-300 rounded-full text-[11px] font-bold border border-cyan-400/20 capitalize">
+                                  <span className="px-2.5 py-0.5 bg-accent/10 text-accent rounded-full text-[11px] font-bold border border-accent/20 capitalize">
                                     {post.published !== false ? 'Published' : 'Draft'}
                                   </span>
                                 </td>
@@ -1310,7 +1395,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                 <td className="py-5 text-right">
                                   <Link 
                                     to={`/blog/${post.id}`} 
-                                    className="p-1 px-3 bg-[#1F2937] text-xs font-bold rounded-lg hover:bg-white hover:text-black transition-all"
+                                    className="p-1 px-3 bg-slate-800 text-xs font-bold rounded-lg hover:bg-white hover:text-black transition-all"
                                   >
                                     Read Article
                                   </Link>
@@ -1349,7 +1434,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {/* Merging local fallback projects and actual user added firebase items */}
                       {projects.map((proj) => (
-                        <div key={proj.id} className="bg-black/60 border border-[#1F2937] rounded-3xl overflow-hidden flex flex-col group hover:border-cyan-400/50 transition-all duration-300">
+                        <div key={proj.id} className="bg-black/60 border border-slate-800 rounded-3xl overflow-hidden flex flex-col group hover:border-accent/50 transition-all duration-300">
                           <div className="aspect-video relative overflow-hidden bg-black/40">
                             {proj.imageUrl && (
                               <img 
@@ -1359,7 +1444,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               />
                             )}
                             <div className="absolute top-4 left-4">
-                              <span className="px-3 py-1 bg-black/80 text-cyan-400 border border-[#1F2937] font-bold text-[10px] uppercase tracking-wider rounded-full backdrop-blur-md">
+                              <span className="px-3 py-1 bg-black/80 text-accent border border-slate-800 font-bold text-[10px] uppercase tracking-wider rounded-full backdrop-blur-md">
                                 {proj.category}
                               </span>
                             </div>
@@ -1370,7 +1455,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <h4 className="text-xl font-bold mb-2 flex items-center justify-between text-white">
                                 <span>{proj.title}</span>
                                 {proj.featured && (
-                                  <span className="text-[9px] text-cyan-400 border border-cyan-400/40 px-2 py-0.5 rounded-md uppercase tracking-wider font-mono">
+                                  <span className="text-[9px] text-accent border border-accent/40 px-2 py-0.5 rounded-md uppercase tracking-wider font-mono">
                                     Featured
                                   </span>
                                 )}
@@ -1390,15 +1475,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               </div>
                             </div>
 
-                            <div className="border-t border-[#1F2937]/40 pt-4 flex items-center justify-between">
+                            <div className="border-t border-slate-800/40 pt-4 flex items-center justify-between">
                               <div className="flex gap-2">
                                 {proj.liveUrl && proj.liveUrl !== '#' && (
-                                  <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-cyan-400 text-gray-500 transition-colors">
+                                  <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-accent text-gray-500 transition-colors">
                                     <Globe className="w-4 h-4" />
                                   </a>
                                 )}
                                 {proj.githubUrl && proj.githubUrl !== '#' && (
-                                  <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-cyan-400 text-gray-500 transition-colors">
+                                  <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-accent text-gray-500 transition-colors">
                                     <Github className="w-4 h-4" />
                                   </a>
                                 )}
@@ -1407,7 +1492,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <div className="flex gap-1">
                                 <button 
                                   onClick={() => handleOpenProjectEdit(proj)}
-                                  className="p-2 hover:text-cyan-400 text-gray-500 transition-colors cursor-pointer"
+                                  className="p-2 hover:text-accent text-gray-500 transition-colors cursor-pointer"
                                   title="Edit Project"
                                 >
                                   <Edit className="w-4 h-4" />
@@ -1451,11 +1536,11 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       </button>
                     </div>
 
-                    <div className="bg-black/60 rounded-[32px] overflow-hidden border border-[#1F2937]">
+                    <div className="bg-black/60 rounded-[32px] overflow-hidden border border-slate-800">
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="bg-white/[0.02] text-gray-400 text-xs font-bold uppercase tracking-widest border-b border-[#1F2937]/50">
+                            <tr className="bg-white/[0.02] text-gray-400 text-xs font-bold uppercase tracking-widest border-b border-slate-800/50">
                               <th className="p-6">Thumbnail & Title</th>
                               <th className="p-6">Category</th>
                               <th className="p-6">Slug</th>
@@ -1468,7 +1553,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <tr key={post.id} className="hover:bg-white/[0.01] transition-colors">
                                 <td className="p-6">
                                   <div className="flex items-center space-x-4">
-                                    <div className="w-12 h-10 rounded-md border border-[#1F2937]/30 bg-navy-dark/40 overflow-hidden flex-shrink-0">
+                                    <div className="w-12 h-10 rounded-md border border-slate-800/30 bg-navy-dark/40 overflow-hidden flex-shrink-0">
                                       {(post.image || post.imageUrl) && (
                                         <img 
                                           src={post.image || post.imageUrl} 
@@ -1494,16 +1579,16 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                   /{post.slug || post.id}
                                 </td>
                                 <td className="p-6">
-                                  <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${post.published !== false ? 'bg-cyan-500/10 text-cyan-300' : 'bg-gray-500/15 text-gray-400'}`}>
+                                  <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${post.published !== false ? 'bg-cyan-500/10 text-accent' : 'bg-gray-500/15 text-gray-400'}`}>
                                     {post.published !== false ? 'Published' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-6 text-right">
                                   <div className="flex items-center justify-end space-x-2">
-                                    <Link to={`/blog/${post.id}`} className="p-2 hover:text-cyan-400 text-gray-500 transition-colors">
+                                    <Link to={`/blog/${post.id}`} className="p-2 hover:text-accent text-gray-500 transition-colors">
                                       <Eye className="w-4 h-4" />
                                     </Link>
-                                    <button onClick={() => handleOpenPostEdit(post)} className="p-2 hover:text-cyan-400 text-gray-500 transition-colors cursor-pointer">
+                                    <button onClick={() => handleOpenPostEdit(post)} className="p-2 hover:text-accent text-gray-500 transition-colors cursor-pointer">
                                       <Edit className="w-4 h-4" />
                                     </button>
                                     <button onClick={() => handleDeletePost(post.id)} className="p-2 hover:text-rose-500 text-gray-500 transition-colors cursor-pointer z-10 relative">
@@ -1530,20 +1615,29 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                   >
                     <div className="lg:col-span-2 space-y-4">
-                      <h3 className="text-2xl font-black text-white mb-4">Contact Inbox</h3>
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-2xl font-black text-white">Contact Inbox</h3>
+                        <button 
+                          onClick={fetchAllData} 
+                          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-white hover:text-black border border-slate-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-all"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          Refresh
+                        </button>
+                      </div>
 
                       <div className="space-y-3">
                         {inquiries.map((inq) => (
                           <div 
                             key={inq.id} 
                             onClick={() => setSelectedInquiry(inq)}
-                            className={`p-6 rounded-3xl border transition-all cursor-pointer flex justify-between items-start ${selectedInquiry?.id === inq.id ? 'bg-cyan-500/5 border-cyan-400/50' : 'bg-black/40 border-[#1F2937]/50 hover:border-white/10'}`}
+                            className={`p-6 rounded-3xl border transition-all cursor-pointer flex justify-between items-start ${selectedInquiry?.id === inq.id ? 'bg-cyan-500/5 border-accent/50' : 'bg-black/40 border-slate-800/50 hover:border-white/10'}`}
                           >
                             <div>
                               <div className="flex items-center gap-3 mb-2">
                                 <span className="font-extrabold text-white">{inq.name}</span>
                                 {inq.status !== 'read' && (
-                                  <span className="px-2 py-0.5 bg-cyan-400/20 text-cyan-300 text-[8px] font-mono rounded font-bold uppercase animate-pulse">
+                                  <span className="px-2 py-0.5 bg-accent/20 text-accent text-[8px] font-mono rounded font-bold uppercase animate-pulse">
                                     New
                                   </span>
                                 )}
@@ -1556,14 +1650,14 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               <div className="flex gap-1 mt-4 justify-end">
                                 <button 
                                   onClick={(e) => { e.stopPropagation(); handleToggleInquiryRead(inq); }} 
-                                  className={`p-2 rounded-lg border text-xs transition-all ${inq.status === 'read' ? 'bg-white/5 hover:bg-white/10 text-gray-400 border-white/5' : 'bg-cyan-400/10 text-cyan-300 border-cyan-400/25 hover:bg-cyan-400/20'}`}
+                                  className={`p-2 rounded-lg border text-xs transition-all ${inq.status === 'read' ? 'bg-white/5 hover:bg-white/10 text-gray-400 border-white/5' : 'bg-accent/10 text-accent border-accent/25 hover:bg-accent/20'}`}
                                   title="Mark as read/unread"
                                 >
                                   <Check className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
                                   onClick={(e) => { e.stopPropagation(); handleDeleteInquiry(inq.id); }} 
-                                  className="p-2 border border-[#1F2937]/40 hover:border-rose-500/30 hover:text-rose-400 rounded-lg text-gray-500 text-xs transition-all"
+                                  className="p-2 border border-slate-800/40 hover:border-rose-500/30 hover:text-rose-400 rounded-lg text-gray-500 text-xs transition-all"
                                   title="Spam destroy"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1585,12 +1679,12 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               message: "Hi MD, I am absolutely thrilled with the clean design of the Threshold of Light. Let's schedule tomorrow's briefing.",
                               status: "new"
                             })}
-                            className="p-6 rounded-3xl border pointer bg-black/40 border-cyan-400/30 flex justify-between items-start"
+                            className="p-6 rounded-3xl border pointer bg-black/40 border-accent/30 flex justify-between items-start"
                           >
                             <div>
                               <div className="flex items-center gap-3 mb-2">
                                 <span className="font-extrabold text-white">Alex Rivers</span>
-                                <span className="px-2 py-0.5 bg-cyan-400/20 text-cyan-300 text-[8px] font-mono rounded font-bold uppercase">
+                                <span className="px-2 py-0.5 bg-accent/20 text-accent text-[8px] font-mono rounded font-bold uppercase">
                                   Default Showcase Lead
                                 </span>
                               </div>
@@ -1607,43 +1701,108 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     </div>
 
                     <div className="lg:col-span-1">
-                      <div className="bg-black/60 p-8 rounded-[40px] sticky top-32 border border-[#1F2937]">
+                      <div className="bg-black/60 p-8 rounded-[40px] sticky top-32 border border-slate-800">
                         {selectedInquiry ? (
                           <div className="space-y-6">
                             <div>
                               <h4 className="text-xl font-black text-white">{selectedInquiry.name}</h4>
-                              <p className="text-xs text-cyan-400 font-mono">{selectedInquiry.email}</p>
+                              <p className="text-xs text-accent font-mono">{selectedInquiry.email}</p>
                             </div>
 
-                            <div className="border-t border-b border-[#1F2937]/35 py-4 space-y-2 text-sm">
+                            <div className="border-t border-b border-slate-800/35 py-4 space-y-2 text-sm">
                               <p><strong className="text-gray-400 font-medium">Subject:</strong> {selectedInquiry.subject}</p>
                             </div>
 
                             <div>
-                              <p className="text-[10px] text-cyan-400 uppercase tracking-widest font-black mb-2">Inbound message body</p>
-                              <div className="bg-black/40 p-4 rounded-2xl border border-[#1F2937] text-gray-300 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto font-mono">
+                              <p className="text-[10px] text-accent uppercase tracking-widest font-black mb-2">Inbound message body</p>
+                              <div className="bg-black/40 p-4 rounded-2xl border border-slate-800 text-gray-300 text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto font-mono">
                                 {selectedInquiry.message}
                               </div>
                             </div>
 
-                            <div className="flex gap-4">
-                              <button 
-                                onClick={() => handleToggleInquiryRead(selectedInquiry)}
-                                className="flex-1 py-3 bg-[#1F2937] text-gray-300 border border-[#1F2937] hover:border-cyan-400/50 text-center rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
-                              >
-                                {selectedInquiry.status === 'read' ? 'Mark unread' : 'Mark read'}
-                              </button>
-                              <a 
-                                href={`mailto:${selectedInquiry.email}?subject=Re: ${encodeURIComponent(selectedInquiry.subject)}`}
-                                className="flex-1 py-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-black text-center font-extrabold rounded-xl text-xs uppercase tracking-widest transition-all block"
-                              >
-                                Write Email
-                              </a>
-                            </div>
+                            {showReplyBox ? (
+                              <div className="mt-4 border border-slate-800 rounded-2xl overflow-hidden bg-black/40 flex flex-col h-[400px] animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                {/* Chat Header */}
+                                <div className="bg-slate-900/50 p-4 border-b border-slate-800 flex justify-between items-center">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold uppercase">
+                                      {selectedInquiry.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-bold text-white leading-tight">{selectedInquiry.name}</p>
+                                      <p className="text-[10px] text-accent flex items-center gap-1 mt-0.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</p>
+                                    </div>
+                                  </div>
+                                  <button onClick={() => setShowReplyBox(false)} className="text-gray-400 hover:text-white p-1 transition-colors">
+                                    <X className="w-5 h-5" />
+                                  </button>
+                                </div>
+
+                                {/* Chat Body */}
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                  {/* Original Inquiry Message */}
+                                  <div className="flex flex-col items-start">
+                                    <div className="bg-slate-800 text-gray-200 p-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm whitespace-pre-wrap">
+                                      {selectedInquiry.message}
+                                    </div>
+                                    <span className="text-[9px] text-gray-500 mt-1 ml-1 font-mono">{formatDate(selectedInquiry.createdAt)}</span>
+                                  </div>
+
+                                  {/* Replies */}
+                                  {selectedInquiry.replies?.map((reply: any, idx: number) => (
+                                    <div key={idx} className={`flex flex-col ${reply.sender === 'admin' ? 'items-end' : 'items-start'}`}>
+                                      <div className={`${reply.sender === 'admin' ? 'bg-accent text-black rounded-tr-sm' : 'bg-slate-800 text-gray-200 rounded-tl-sm'} p-3 rounded-2xl max-w-[85%] text-sm whitespace-pre-wrap`}>
+                                        {reply.text}
+                                      </div>
+                                      <span className="text-[9px] text-gray-500 mt-1 mr-1 font-mono">{reply.createdAt ? new Date(reply.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
+                                    </div>
+                                  ))}
+                                  <div ref={chatEndRef} />
+                                </div>
+
+                                {/* Chat Input */}
+                                <div className="p-3 bg-slate-900/50 border-t border-slate-800 flex items-end gap-2">
+                                  <textarea
+                                    value={replyText}
+                                    onChange={(e) => setReplyText(e.target.value)}
+                                    placeholder="Type a message..."
+                                    className="flex-1 bg-black/40 border border-slate-800 p-3 rounded-xl text-sm text-gray-300 resize-none h-[48px] min-h-[48px] max-h-32 outline-none focus:border-accent transition-colors scrollbar-none"
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSendReply();
+                                      }
+                                    }}
+                                  />
+                                  <button
+                                    onClick={handleSendReply}
+                                    disabled={!replyText.trim()}
+                                    className="h-[48px] w-[48px] flex-shrink-0 bg-accent hover:bg-white text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                  >
+                                    <Send className="w-4 h-4 ml-1" />
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex gap-4">
+                                <button 
+                                  onClick={() => handleToggleInquiryRead(selectedInquiry)}
+                                  className="flex-1 py-3 bg-slate-800 text-gray-300 border border-slate-800 hover:border-accent/50 text-center rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+                                >
+                                  {selectedInquiry.status === 'read' ? 'Mark unread' : 'Mark read'}
+                                </button>
+                                <button
+                                  onClick={handleReplyClick}
+                                  className="flex-1 py-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-black text-center font-extrabold rounded-xl text-xs uppercase tracking-widest transition-all block cursor-pointer"
+                                >
+                                  Reply
+                                </button>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="text-center py-24 text-gray-500">
-                            <MessageSquare className="w-12 h-12 text-[#1F2937] mx-auto mb-4" />
+                            <MessageSquare className="w-12 h-12 text-slate-800 mx-auto mb-4" />
                             <p className="text-xs leading-relaxed max-w-[200px] mx-auto">Select a contact ticket list card to inspect details and initiate response triggers.</p>
                           </div>
                         )}
@@ -1661,7 +1820,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     exit={{ opacity: 0, y: -15 }}
                     className="space-y-6"
                   >
-                    <div className="bg-black/60 p-8 rounded-[40px] border border-[#1F2937]">
+                    <div className="bg-black/60 p-8 rounded-[40px] border border-slate-800">
                       <h3 className="text-2xl font-black text-white mb-2">Platform Credentials Ledger</h3>
                       <p className="text-gray-400 text-sm mb-8 leading-relaxed max-w-2xl">
                         Administrative accesses are constrained and validated via our Zero-Trust firestore security rules. Staff identities matching active roles are cataloged below.
@@ -1669,16 +1828,16 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                       <div className="space-y-4">
                         {usersList.length > 0 ? usersList.map((userObj) => (
-                          <div key={userObj.id} className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-black/40 border border-[#1F2937]/50 rounded-2xl">
+                          <div key={userObj.id} className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-black/40 border border-slate-800/50 rounded-2xl">
                             <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                              <div className="w-12 h-12 bg-cyan-400/10 text-cyan-400 rounded-full flex items-center justify-center border border-cyan-400/20 font-bold capitalize">
+                              <div className="w-12 h-12 bg-accent/10 text-accent rounded-full flex items-center justify-center border border-accent/20 font-bold capitalize">
                                 {userObj.displayName ? userObj.displayName[0] : 'U'}
                               </div>
                               <div>
                                 <p className="font-extrabold text-white flex items-center gap-2">
                                   <span>{userObj.displayName || userObj.name || 'Staff Administrator'}</span>
                                   {userObj.email === 'nurmohammad.22.10.2007@gmail.com' && (
-                                    <span className="text-[9px] bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 px-2 py-0.5 rounded-md font-bold uppercase font-mono">
+                                    <span className="text-[9px] bg-accent/20 text-accent border border-accent/30 px-2 py-0.5 rounded-md font-bold uppercase font-mono">
                                       Owner
                                     </span>
                                   )}
@@ -1688,7 +1847,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                             </div>
 
                             <div className="flex flex-wrap items-center gap-3">
-                              <span className="text-xs font-mono bg-[#1F2937] text-cyan-300 border border-cyan-400/20 px-3 py-1.5 rounded-full capitalize font-bold">
+                              <span className="text-xs font-mono bg-slate-800 text-accent border border-accent/20 px-3 py-1.5 rounded-full capitalize font-bold">
                                 {userObj.role || 'user'}
                               </span>
                               
@@ -1702,7 +1861,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                   {/* Change Role */}
                                   <button
                                     onClick={() => handleUpdateUserRole(userObj.id, userObj.role === 'admin' ? 'user' : 'admin')}
-                                    className="px-2.5 py-1 bg-cyan-400/10 hover:bg-cyan-400 hover:text-black border border-cyan-400/20 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors"
+                                    className="px-2.5 py-1 bg-accent/10 hover:bg-accent hover:text-black border border-accent/20 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors"
                                     title="Toggle Admin Privilege"
                                   >
                                     Set {userObj.role === 'admin' ? 'User' : 'Admin'}
@@ -1740,16 +1899,16 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                             { id: "staff-1", displayName: "Security Gatekeeper", email: "audit@whoami.security", role: "manager" },
                             { id: "staff-2", displayName: "Creative Director", email: "design@whoami.branding", role: "editor" }
                           ].map((userObj) => (
-                            <div key={userObj.id} className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-black/40 border border-[#1F2937]/50 rounded-2xl">
+                            <div key={userObj.id} className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-black/40 border border-slate-800/50 rounded-2xl">
                               <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                                <div className="w-12 h-12 bg-cyan-400/10 text-cyan-400 rounded-full flex items-center justify-center border border-cyan-400/20 font-bold">
+                                <div className="w-12 h-12 bg-accent/10 text-accent rounded-full flex items-center justify-center border border-accent/20 font-bold">
                                   {userObj.displayName[0]}
                                 </div>
                                 <div>
                                   <p className="font-extrabold text-white flex items-center gap-2">
                                     <span>{userObj.displayName}</span>
                                     {userObj.email === 'nurmohammad.22.10.2007@gmail.com' && (
-                                      <span className="text-[9px] bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 px-2 py-0.5 rounded-md font-bold uppercase font-mono">
+                                      <span className="text-[9px] bg-accent/20 text-accent border border-accent/30 px-2 py-0.5 rounded-md font-bold uppercase font-mono">
                                         Owner
                                       </span>
                                     )}
@@ -1759,7 +1918,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                               </div>
 
                               <div className="flex items-center gap-4">
-                                <span className="text-xs font-mono bg-[#1F2937] text-cyan-300 border border-cyan-400/20 px-3 py-1.5 rounded-full capitalize font-bold">
+                                <span className="text-xs font-mono bg-slate-800 text-accent border border-accent/20 px-3 py-1.5 rounded-full capitalize font-bold">
                                   {userObj.role}
                                 </span>
                                 <span className="text-xs text-gray-600 font-mono">
@@ -1785,19 +1944,19 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   >
                     {/* Console logger */}
                     <div className="lg:col-span-2 space-y-6">
-                      <div className="bg-[#020205] p-6 rounded-3xl border border-[#1F2937]/80 font-mono relative overflow-hidden">
-                        <div className="flex justify-between items-center mb-4 border-b border-[#1F2937] pb-3">
+                      <div className="bg-navy-dark p-6 rounded-3xl border border-slate-800/80 font-mono relative overflow-hidden">
+                        <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                           <div className="flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full bg-rose-500" />
                             <span className="w-3 h-3 rounded-full bg-amber-500" />
                             <span className="w-3 h-3 rounded-full bg-emerald-500" />
                             <span className="text-xs text-gray-400 font-bold ml-2">TERMINAL OUTPUT LOGGER</span>
                           </div>
-                          <span className="text-[10px] text-cyan-400 animate-pulse uppercase tracking-wider">● Stream Live</span>
+                          <span className="text-[10px] text-accent animate-pulse uppercase tracking-wider">● Stream Live</span>
                         </div>
 
                         {/* Printed log lines */}
-                        <div className="space-y-2.5 h-64 overflow-y-auto text-xs text-cyan-300/80 p-2 bg-black/40 rounded-xl">
+                        <div className="space-y-2.5 h-64 overflow-y-auto text-xs text-accent/80 p-2 bg-black/40 rounded-xl">
                           {terminalLogs.map((log, index) => (
                             <div key={index} className="flex gap-2">
                               <span className="text-gray-600 select-none">&gt;</span>
@@ -1808,7 +1967,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                       </div>
 
                       {/* Advanced infrastructure features */}
-                      <div className="bg-black/40 p-6 rounded-3xl border border-[#1F2937]/50">
+                      <div className="bg-black/40 p-6 rounded-3xl border border-slate-800/50">
                         <h4 className="text-white font-extrabold font-sans text-lg mb-3">Cloud Configuration Details</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono text-gray-400">
                           <div className="p-4 bg-black/20 rounded-xl border border-white/5 space-y-1.5">
@@ -1817,7 +1976,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                             <p>STABLE_RUNNING: <span className="text-emerald-400 font-bold">True</span></p>
                           </div>
                           <div className="p-4 bg-black/20 rounded-xl border border-white/5 space-y-1.5">
-                            <p>DEPLOY_TARGET: <span className="text-cyan-400 font-bold">Containers (GCP-RUN)</span></p>
+                            <p>DEPLOY_TARGET: <span className="text-accent font-bold">Containers (GCP-RUN)</span></p>
                             <p>SSL_STATUS: <span className="text-white font-bold">Automated TLS v1.3</span></p>
                             <p>RE-RITUAL: <span className="text-white font-bold">setDoc Overwrites OK</span></p>
                           </div>
@@ -1827,10 +1986,10 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                     {/* Server status cards */}
                     <div className="space-y-6">
-                      <div className="bg-gradient-to-br from-[#0B0B0F] to-black/25 p-6 rounded-3xl border border-[#1F2937]/50 space-y-4">
+                      <div className="bg-gradient-to-br from-[#0B0B0F] to-black/25 p-6 rounded-3xl border border-slate-800/50 space-y-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">SECURE TUNNELS</span>
-                          <span className="text-[9px] bg-cyan-400/10 text-cyan-300 border border-cyan-400/30 px-2 py-0.5 rounded uppercase font-mono font-bold">ONLINE</span>
+                          <span className="text-xs font-mono text-accent font-bold uppercase tracking-wider">SECURE TUNNELS</span>
+                          <span className="text-[9px] bg-accent/10 text-accent border border-accent/30 px-2 py-0.5 rounded uppercase font-mono font-bold">ONLINE</span>
                         </div>
 
                         <div className="space-y-2">
@@ -1840,7 +1999,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                           </div>
                           <div className="bg-white/[0.02] p-3 rounded-lg flex items-center justify-between text-xs">
                             <span className="text-gray-400">WebSocket Mirror</span>
-                            <span className="text-cyan-300 font-mono font-bold">PORT 3000</span>
+                            <span className="text-accent font-mono font-bold">PORT 3000</span>
                           </div>
                           <div className="bg-white/[0.02] p-3 rounded-lg flex items-center justify-between text-xs">
                             <span className="text-gray-400">Client Sync Engine</span>
@@ -1849,9 +2008,9 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                         </div>
                       </div>
 
-                      <div className="bg-cyan-500/10 border border-cyan-400/20 p-6 rounded-3xl flex flex-col justify-between">
+                      <div className="bg-cyan-500/10 border border-accent/20 p-6 rounded-3xl flex flex-col justify-between">
                         <div>
-                          <Terminal className="text-cyan-400 w-8 h-8 mb-4 animate-bounce" />
+                          <Terminal className="text-accent w-8 h-8 mb-4 animate-bounce" />
                           <h4 className="text-white font-sans font-black text-lg mb-2">Platform Diagnostics</h4>
                           <p className="text-xs text-gray-400 leading-relaxed mb-6">
                             This container binds host ports securely to fulfill Google AI Studio sandbox requirements with Zero-Trust compliance.
@@ -1859,7 +2018,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                         </div>
                         <button 
                           onClick={fetchAllData}
-                          className="w-full py-3 bg-cyan-400 hover:bg-white text-black font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                          className="w-full py-3 bg-accent hover:bg-white text-black font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                         >
                           Refresh Tunnels
                         </button>
@@ -1891,7 +2050,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0B0B0F] border border-[#1F2937]/80 rounded-[40px] p-8 md:p-10 shadow-2xl z-10 max-h-[90vh] overflow-y-auto text-white"
+              className="relative w-full max-w-2xl bg-navy-dark border border-slate-800/80 rounded-[40px] p-8 md:p-10 shadow-2xl z-10 max-h-[90vh] overflow-y-auto text-white"
             >
               <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                 <h3 className="text-2xl font-black">
@@ -1908,23 +2067,23 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
               <form onSubmit={handleSaveProject} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Project Title *</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Project Title *</label>
                     <input 
                       type="text"
                       required
                       value={projectForm.title}
                       onChange={(e) => setProjectForm({...projectForm, title: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder="e.g. Threshold of Light"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Category</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Category</label>
                     <select 
                       value={projectForm.category}
                       onChange={(e) => setProjectForm({...projectForm, category: e.target.value})}
-                      className="w-full bg-[#0B0B0F] border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none text-white transition-colors"
+                      className="w-full bg-navy-dark border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none text-white transition-colors"
                     >
                       <option value="Web Design">Web Design</option>
                       <option value="Full Stack">Full Stack</option>
@@ -1937,24 +2096,24 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Thumb Image URL *</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Thumb Image URL *</label>
                     <input 
                       type="text"
                       required
                       value={projectForm.imageUrl}
                       onChange={(e) => setProjectForm({...projectForm, imageUrl: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder=""
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Tech Stack (Comma Separated)</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Tech Stack (Comma Separated)</label>
                     <input 
                       type="text"
                       value={projectForm.technologies}
                       onChange={(e) => setProjectForm({...projectForm, technologies: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder="e.g. Vite, React, Tailwind CSS"
                     />
                   </div>
@@ -1962,36 +2121,36 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">GitHub Repository URL</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">GitHub Repository URL</label>
                     <input 
                       type="text"
                       value={projectForm.githubUrl}
                       onChange={(e) => setProjectForm({...projectForm, githubUrl: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder="https://github.com/..."
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Live URL</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Live URL</label>
                     <input 
                       type="text"
                       value={projectForm.liveUrl}
                       onChange={(e) => setProjectForm({...projectForm, liveUrl: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder="https://..."
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Description *</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-accent">Description *</label>
                   <textarea 
                     required
                     rows={4}
                     value={projectForm.description}
                     onChange={(e) => setProjectForm({...projectForm, description: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors resize-none"
                     placeholder="Describe how the creative work was built, what systems it orchestrates..."
                   />
                 </div>
@@ -2002,14 +2161,14 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     id="featured"
                     checked={projectForm.featured}
                     onChange={(e) => setProjectForm({...projectForm, featured: e.target.checked})}
-                    className="w-4 h-4 text-cyan-400 border-white/10 rounded focus:ring-cyan-400 accent-cyan-400 bg-[#0B0B0F]"
+                    className="w-4 h-4 text-accent border-white/10 rounded focus:ring-accent accent bg-navy-dark"
                   />
                   <label htmlFor="featured" className="text-xs font-bold uppercase tracking-widest text-slate-300 cursor-pointer">
                     Promote object to "Featured Banner" on baseline page
                   </label>
                 </div>
 
-                <div className="flex justify-end gap-4 pt-4 border-t border-[#1F2937]/50">
+                <div className="flex justify-end gap-4 pt-4 border-t border-slate-800/50">
                   <button 
                     type="button"
                     onClick={() => setShowProjectModal(false)}
@@ -2046,7 +2205,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0B0B0F] border border-[#1F2937]/80 rounded-[40px] p-8 md:p-10 shadow-2xl z-10 max-h-[90vh] overflow-y-auto text-white"
+              className="relative w-full max-w-2xl bg-navy-dark border border-slate-800/80 rounded-[40px] p-8 md:p-10 shadow-2xl z-10 max-h-[90vh] overflow-y-auto text-white"
             >
               <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                 <h3 className="text-2xl font-black">
@@ -2063,23 +2222,23 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
               <form onSubmit={handleSavePost} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Post Title *</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Post Title *</label>
                     <input 
                       type="text"
                       required
                       value={postForm.title}
                       onChange={(e) => setProjectPostForm({...postForm, title: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder="e.g. Modern UI Design System"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Category</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Category</label>
                     <select 
                       value={postForm.category}
                       onChange={(e) => setProjectPostForm({...postForm, category: e.target.value})}
-                      className="w-full bg-[#0B0B0F] border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none text-white transition-colors"
+                      className="w-full bg-navy-dark border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none text-white transition-colors"
                     >
                       <option value="AI">AI Tools</option>
                       <option value="Development">Development</option>
@@ -2093,36 +2252,36 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Slug Route Link</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Slug Route Link</label>
                     <input 
                       type="text"
                       value={postForm.slug}
                       onChange={(e) => setProjectPostForm({...postForm, slug: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors font-mono"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors font-mono"
                       placeholder="e.g. modern-design-system"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Thumbnail Image URL</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Thumbnail Image URL</label>
                     <input 
                       type="text"
                       value={postForm.imageUrl}
                       onChange={(e) => setProjectPostForm({...postForm, imageUrl: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-cyan-400 outline-none transition-colors"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
                       placeholder=""
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-[#22D3EE]">Article Markdown Content *</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-accent">Article Markdown Content *</label>
                   <textarea 
                     required
                     rows={8}
                     value={postForm.content}
                     onChange={(e) => setProjectPostForm({...postForm, content: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm font-mono focus:border-cyan-400 outline-none transition-colors resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm font-mono focus:border-accent outline-none transition-colors resize-none"
                     placeholder="# My Subheader&#10;&#10;Use markdown freely..."
                   />
                 </div>
@@ -2133,14 +2292,14 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                     id="published"
                     checked={postForm.published}
                     onChange={(e) => setProjectPostForm({...postForm, published: e.target.checked})}
-                    className="w-4 h-4 text-cyan-400 border-white/10 rounded focus:ring-cyan-400 accent-cyan-400 bg-[#0B0B0F]"
+                    className="w-4 h-4 text-accent border-white/10 rounded focus:ring-accent accent bg-navy-dark"
                   />
                   <label htmlFor="published" className="text-xs font-bold uppercase tracking-widest text-slate-300 cursor-pointer">
                     Publish immediately (Draft if deselected)
                   </label>
                 </div>
 
-                <div className="flex justify-end gap-4 pt-4 border-t border-[#1F2937]/50">
+                <div className="flex justify-end gap-4 pt-4 border-t border-slate-800/50">
                   <button 
                     type="button"
                     onClick={() => setProjectPostForm({...postForm, published: false})}

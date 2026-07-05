@@ -133,7 +133,7 @@ export const ServicesEditor = () => {
       {/* Overview Card */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-white/5 border border-white/10">
         <div className="flex gap-4 items-start">
-          <div className="p-3 bg-cyan-400/10 rounded-xl text-cyan-400 mt-1">
+          <div className="p-3 bg-accent/10 rounded-xl text-accent mt-1">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
@@ -146,7 +146,7 @@ export const ServicesEditor = () => {
         <button
           type="button"
           onClick={handleAddService}
-          className="flex items-center gap-2 px-5 py-2.5 bg-cyan-400 hover:bg-cyan-300 text-black font-bold rounded-xl text-xs uppercase tracking-wider transition-all self-start md:self-center"
+          className="flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-cyan-300 text-black font-bold rounded-xl text-xs uppercase tracking-wider transition-all self-start md:self-center"
         >
           <Plus className="w-4 h-4" />
           Add Service
@@ -178,7 +178,7 @@ export const ServicesEditor = () => {
                       value={service.title}
                       onChange={(e) => handleUpdateService(index, { title: e.target.value })}
                       placeholder="Service Title (e.g., UI/UX Design)"
-                      className="mt-1 block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 font-bold focus:outline-none focus:border-cyan-400/50"
+                      className="mt-1 block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 font-bold focus:outline-none focus:border-accent/50"
                     />
                   </div>
                   <button
@@ -201,7 +201,7 @@ export const ServicesEditor = () => {
                     value={service.description}
                     onChange={(e) => handleUpdateService(index, { description: e.target.value })}
                     placeholder="Describe your workflow and deliverables..."
-                    className="block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-cyan-400/50 resize-none"
+                    className="block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-accent/50 resize-none"
                   />
                 </div>
 
@@ -218,7 +218,7 @@ export const ServicesEditor = () => {
                       value={service.link || ''}
                       onChange={(e) => handleUpdateService(index, { link: e.target.value })}
                       placeholder="e.g. /contact or https://github.com"
-                      className="block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-cyan-400/50"
+                      className="block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-accent/50"
                     />
                     <p className="mt-1.5 text-[10px] text-zinc-500 leading-relaxed">
                       Optional URL or local page hash link (e.g. <code>#portfolio</code>). Users will navigate here upon interaction.
@@ -241,7 +241,7 @@ export const ServicesEditor = () => {
                             onClick={() => handleUpdateService(index, { iconName: iconOpt.name })}
                             className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${
                               isSelected 
-                                ? 'bg-cyan-400 text-black font-bold scale-105 shadow-[0_0_10px_rgba(34,211,238,0.3)]' 
+                                ? 'bg-accent text-black font-bold scale-105 shadow-[0_0_10px_rgba(34,211,238,0.3)]' 
                                 : 'text-zinc-400 hover:bg-white/5 hover:text-white'
                             }`}
                             title={iconOpt.name}

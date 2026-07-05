@@ -98,7 +98,7 @@ export const FooterEditor = () => {
   return (
     <div className="space-y-8 text-white">
       <div>
-        <h4 className="text-xl font-bold flex items-center gap-2 text-cyan-400">
+        <h4 className="text-xl font-bold flex items-center gap-2 text-accent">
           <AlignLeft className="w-5 h-5" />
           Footer Content Settings
         </h4>
@@ -113,10 +113,10 @@ export const FooterEditor = () => {
         </div>
       )}
 
-      <div className="p-6 bg-slate-900/30 rounded-2xl border border-[#1F2937]/50 space-y-6">
+      <div className="p-6 bg-slate-900/30 rounded-2xl border border-slate-800/50 space-y-6">
         {/* Connection Header Section */}
         <div className="border-b border-white/5 pb-4">
-          <h5 className="font-semibold text-sm text-cyan-300 mb-4">Connection Heading</h5>
+          <h5 className="font-semibold text-sm text-accent mb-4">Connection Heading</h5>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-xs text-slate-400 font-medium block">Main Title Phrase</label>
@@ -124,7 +124,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={connectTitleMain}
                 onChange={e => setConnectTitleMain(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="Let's connect"
               />
             </div>
@@ -134,7 +134,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={connectTitleSpan}
                 onChange={e => setConnectTitleSpan(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="there"
               />
             </div>
@@ -143,14 +143,14 @@ export const FooterEditor = () => {
 
         {/* Brand Information Section */}
         <div className="border-b border-white/5 pb-4">
-          <h5 className="font-semibold text-sm text-cyan-300 mb-4">Brand & Status Details</h5>
+          <h5 className="font-semibold text-sm text-accent mb-4">Brand & Status Details</h5>
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs text-slate-400 font-medium block">Footer Short Intro</label>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white h-24 resize-none"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white h-24 resize-none"
                 placeholder="Describe your role or mission..."
               />
             </div>
@@ -161,7 +161,7 @@ export const FooterEditor = () => {
                   type="text"
                   value={playgroundText}
                   onChange={e => setPlaygroundText(e.target.value)}
-                  className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                  className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                   placeholder="Try Wave Playground"
                 />
               </div>
@@ -171,7 +171,7 @@ export const FooterEditor = () => {
                   type="text"
                   value={logoText}
                   onChange={e => setLogoText(e.target.value)}
-                  className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                  className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                   placeholder="nurmd"
                 />
               </div>
@@ -183,7 +183,7 @@ export const FooterEditor = () => {
                   type="text"
                   value={statusLabel}
                   onChange={e => setStatusLabel(e.target.value)}
-                  className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                  className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                   placeholder="Recent Status"
                 />
               </div>
@@ -193,7 +193,7 @@ export const FooterEditor = () => {
                   type="text"
                   value={statusText}
                   onChange={e => setStatusText(e.target.value)}
-                  className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                  className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                   placeholder="Designing the future of tech..."
                 />
               </div>
@@ -203,7 +203,7 @@ export const FooterEditor = () => {
 
         {/* Contact and Copyright Section */}
         <div className="border-b border-white/5 pb-4">
-          <h5 className="font-semibold text-sm text-cyan-300 mb-4">Contact Info & copyright</h5>
+          <h5 className="font-semibold text-sm text-accent mb-4">Contact Info & copyright</h5>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-xs text-slate-400 font-medium block flex items-center gap-1">
@@ -213,7 +213,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="hello@nurmd.dev"
               />
             </div>
@@ -225,7 +225,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={location}
                 onChange={e => setLocation(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="Dhaka, Bangladesh"
               />
             </div>
@@ -235,7 +235,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={copyright}
                 onChange={e => setCopyright(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="All rights reserved @toxichome_2026"
               />
             </div>
@@ -244,7 +244,7 @@ export const FooterEditor = () => {
 
         {/* Social Links */}
         <div>
-          <h5 className="font-semibold text-sm text-cyan-300 mb-4">Social Media Profile Links</h5>
+          <h5 className="font-semibold text-sm text-accent mb-4">Social Media Profile Links</h5>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-xs text-slate-400 font-medium block">Twitter / X URL</label>
@@ -252,7 +252,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={twitterUrl}
                 onChange={e => setTwitterUrl(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="#"
               />
             </div>
@@ -262,7 +262,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={githubUrl}
                 onChange={e => setGithubUrl(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="#"
               />
             </div>
@@ -272,7 +272,7 @@ export const FooterEditor = () => {
                 type="text"
                 value={linkedinUrl}
                 onChange={e => setLinkedinUrl(e.target.value)}
-                className="w-full bg-[#1F2937] border border-[#374151] p-3 rounded-lg text-xs text-white"
+                className="w-full bg-slate-800 border border-[#374151] p-3 rounded-lg text-xs text-white"
                 placeholder="#"
               />
             </div>
@@ -284,7 +284,7 @@ export const FooterEditor = () => {
         <button
           onClick={handleSave}
           disabled={loading}
-          className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
+          className="px-6 py-3 bg-cyan-500 hover:bg-accent text-black font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
         >
           <Save className="w-4 h-4" />
           {loading ? 'Saving Layout...' : 'Save Footer Text'}

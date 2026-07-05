@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { ChatWidget } from './ChatWidget';
 
 export const Layout: React.FC<{ children: React.ReactNode; hideNavbar?: boolean; hideFooter?: boolean }> = ({ children, hideNavbar, hideFooter }) => {
   return (
@@ -11,6 +12,7 @@ export const Layout: React.FC<{ children: React.ReactNode; hideNavbar?: boolean;
         {children}
       </main>
       {!hideFooter && <Footer />}
+      {!hideNavbar && <ChatWidget />}
     </div>
   );
 };
