@@ -1766,7 +1766,7 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                                     value={replyText}
                                     onChange={(e) => setReplyText(e.target.value)}
                                     placeholder="Type a message..."
-                                    className="flex-1 bg-black/40 border border-slate-800 p-3 rounded-xl text-sm text-gray-300 resize-none h-[48px] min-h-[48px] max-h-32 outline-none focus:border-accent transition-colors scrollbar-none"
+                                    className="flex-1 bg-black/40 border border-slate-800 p-3 rounded-xl text-sm text-gray-300 resize-none h-[48px] min-h-[48px] max-h-32 outline-none focus:border-accent transition-colors"
                                     onKeyDown={(e) => {
                                       if (e.key === 'Enter' && !e.shiftKey) {
                                         e.preventDefault();

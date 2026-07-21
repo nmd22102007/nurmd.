@@ -89,7 +89,17 @@ export const Login = () => {
       navigate('/');
     } catch (err: any) {
       console.error('Google login error:', err);
-      if (err.code === 'auth/operation-not-allowed') {
+      if (err?.code === 'auth/network-request-failed' || err?.message?.includes('network-request-failed')) {
+        setError(
+          <div className="space-y-2 text-left">
+            <p className="font-bold text-red-400">Network Request Failed</p>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              Google login requires third-party cookies or popups, which may be blocked in this preview iframe. 
+              <strong>Please open the app in a new tab (click the icon in the top right corner)</strong> to sign in, or try using Email/Password.
+            </p>
+          </div>
+        );
+      } else if (err.code === 'auth/operation-not-allowed') {
         setError(
           <div className="space-y-2 text-left">
             <p className="font-bold text-red-400">Authentication failed: Google provider is not enabled.</p>
