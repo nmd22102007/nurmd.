@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { compressImageFile } from '../../../lib/imageUtils';
 import { 
   Plus, 
   Trash2, 
@@ -14,7 +15,9 @@ import {
   MapPin, 
   Mail, 
   Phone, 
-  Link2 
+  Link2,
+  Upload,
+  Loader2
 } from 'lucide-react';
 
 interface StatItem {
@@ -38,6 +41,24 @@ export const AboutEditor = () => {
   const [title, setTitle] = useState('About me');
   const [subtitle, setSubtitle] = useState('A deeper look into my background, creative philosophy, and professional milestones.');
   const [imageUrl, setImageUrl] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingImage(true);
+      const dataUrl = await compressImageFile(file, 1200, 0.85);
+      setImageUrl(dataUrl);
+    } catch (err) {
+      console.error("Failed to compress image:", err);
+      alert("ইমেজ ফাইল প্রক্রিয়াকরণে ত্রুটি ঘটেছে।");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
   const [heading, setHeading] = useState('Crafting Digital Realities');
   const [description1, setDescription1] = useState("I'm a passionate digital creator focused on turning ideas into immersive digital experiences. I design and build modern web products that blend technical precision with artistic identity.");
   const [description2, setDescription2] = useState("I believe great design is built on both imagination and discipline. My workflow combines research, modern engineering, and technical aesthetics to deliver elegant, production-ready interfaces.");
@@ -217,20 +238,70 @@ export const AboutEditor = () => {
 
           <div className="bg-slate-900/30 border border-slate-800/50 p-6 rounded-2xl space-y-4">
             <h5 className="text-sm font-bold text-emerald-400 uppercase tracking-wider border-b border-white/5 pb-2">Hero Narrative</h5>
-            <div className="space-y-2">
-              <label className="text-xs text-gray-400 font-medium flex items-center gap-1">
-                <ImageIcon className="w-3.5 h-3.5 text-gray-500" /> Narrative Image (URL)
-              </label>
-              <input
-                type="text"
-                value={imageUrl}
-                onChange={e => setImageUrl(e.target.value)}
-                className="w-full bg-navy border border-slate-800 p-3 rounded-lg text-xs text-gray-300"
-                placeholder="https://..."
+            <div className="space-y-3">
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                className="hidden" 
+                accept="image/*" 
+                onChange={handleFileUpload} 
               />
-              <div className="h-28 w-full rounded-lg overflow-hidden border border-slate-800 mt-2 bg-navy">
-                {imageUrl && <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />}
+
+              {/* Upload Drop Button */}
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className="p-5 border-2 border-dashed border-emerald-500/30 hover:border-emerald-400 bg-navy/60 hover:bg-navy rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all gap-2 text-center group"
+              >
+                {uploadingImage ? (
+                  <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    ছবি আপলোড হচ্ছে...
+                  </div>
+                ) : (
+                  <>
+                    <div className="p-3 bg-emerald-500/10 rounded-full text-emerald-400 group-hover:scale-110 transition-transform">
+                      <Upload className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white uppercase tracking-wider">কম্পিউটার/মোবাইল থেকে ছবি আপলোড করুন</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">ডিভাইস থেকে ফাইল নির্বাচন করুন (PNG, JPG, WEBP)</p>
+                    </div>
+                  </>
+                )}
               </div>
+
+              {/* Optional URL Fallback */}
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-500 font-mono uppercase">অথবা সরাসরি ইমেজ লিংক (URL) লিখুন</label>
+                <input
+                  type="text"
+                  value={imageUrl}
+                  onChange={e => setImageUrl(e.target.value)}
+                  className="w-full bg-navy border border-slate-800 p-2.5 rounded-lg text-xs text-gray-300 font-mono"
+                  placeholder="https://..."
+                />
+              </div>
+
+              {imageUrl ? (
+                <div className="relative h-44 w-full rounded-xl overflow-hidden border border-slate-800 mt-2 group">
+                  <img src={imageUrl} alt="About Narrative Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-between p-3">
+                    <span className="text-[9px] font-mono uppercase bg-black/60 px-2 py-1 rounded text-emerald-400 font-bold">আপলোড করা ছবি (Live Preview)</span>
+                    <button 
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setImageUrl(''); }} 
+                      className="text-[10px] bg-rose-500/80 hover:bg-rose-500 text-white px-2 py-1 rounded font-bold transition-all"
+                    >
+                      রিমুভ করুন
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-20 w-full rounded-xl bg-black/20 border border-dashed border-slate-800 flex flex-col items-center justify-center text-gray-500 text-xs">
+                  <ImageIcon className="w-5 h-5 mb-1 opacity-40" />
+                  কোন ছবি আপলোড করা হয়নি।
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-xs text-gray-400 font-medium">Primary Story Heading</label>

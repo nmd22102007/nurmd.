@@ -4,8 +4,10 @@ import { Layout } from '../components/Layout';
 import { Hero } from '../components/Hero';
 import { Services } from '../components/Services';
 import { db } from '../lib/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
+import { Camera, Upload, Loader2, Check } from 'lucide-react';
+import { compressImageFile } from '../lib/imageUtils';
 
 // Scroll trigger counter component
 const AnimatedCounter = ({ value }: { value: string }) => {
@@ -73,6 +75,35 @@ const Home = () => {
     return null;
   });
 
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingImage(true);
+      const dataUrl = await compressImageFile(file, 1200, 0.85);
+
+      // Save to Firestore
+      await setDoc(doc(db, 'siteConfig', 'about'), { imageUrl: dataUrl }, { merge: true });
+      await setDoc(doc(db, 'siteConfig', 'hero'), { imageUrl: dataUrl }, { merge: true });
+
+      // Local state update
+      setAboutData((prev: any) => ({ ...(prev || {}), imageUrl: dataUrl }));
+      setHeroData((prev: any) => ({ ...(prev || {}), imageUrl: dataUrl }));
+
+      localStorage.setItem('siteConfig_about', JSON.stringify({ ...(aboutData || {}), imageUrl: dataUrl }));
+      localStorage.setItem('siteConfig_hero', JSON.stringify({ ...(heroData || {}), imageUrl: dataUrl }));
+    } catch (err) {
+      console.error("Failed to upload image:", err);
+      alert("ইমেজ আপলোড ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   useEffect(() => {
     const docRef = doc(db, 'siteConfig', 'about');
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
@@ -109,17 +140,51 @@ const Home = () => {
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white/5 blur-[120px] pointer-events-none" />
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="relative">
-            <div className="aspect-square glass rounded-[60px] overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-              {(heroData?.imageUrl || aboutData?.imageUrl) && (
+            <div 
+              className="aspect-square glass rounded-[60px] overflow-hidden rotate-3 hover:rotate-0 transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative group cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+              title="ইমেজ আপলোড করতে ক্লিক করুন"
+            >
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                className="hidden" 
+                accept="image/*" 
+                onChange={handleImageFileChange} 
+              />
+
+              {(heroData?.imageUrl || aboutData?.imageUrl) ? (
                 <img 
                   src={heroData?.imageUrl || aboutData?.imageUrl} 
                   alt="MD - Web Designer" 
-                  className="w-full h-full object-cover -rotate-3 hover:rotate-0 transition-transform duration-500"
+                  className="w-full h-full object-cover -rotate-3 group-hover:rotate-0 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                   loading="eager"
                   decoding="async"
                 />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-black/50 text-slate-400 p-6 text-center">
+                  <Camera className="w-12 h-12 mb-3 text-accent animate-bounce" />
+                  <span className="text-sm font-bold uppercase tracking-wider text-white">ছবি আপলোড করুন</span>
+                  <span className="text-[11px] text-slate-400 mt-1">Select an image from device</span>
+                </div>
               )}
+
+              {/* Upload Hover Overlay */}
+              <div className={`absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-white transition-opacity duration-300 ${uploadingImage ? 'opacity-100 pointer-events-auto' : 'opacity-0 group-hover:opacity-100'}`}>
+                {uploadingImage ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="w-8 h-8 text-accent animate-spin" />
+                    <span className="text-xs font-bold tracking-wider">আপলোড হচ্ছে...</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 bg-navy/90 border border-white/20 px-5 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-transform">
+                    <Upload className="w-6 h-6 text-accent" />
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">নতুন ছবি আপলোড করুন</span>
+                    <span className="text-[10px] text-slate-300">ডিভাইস থেকে ফাইল সিলেক্ট করুন</span>
+                  </div>
+                )}
+              </div>
             </div>
             {/* Experience Badge */}
             <div className="absolute -bottom-10 -right-10 glass p-8 rounded-3xl -rotate-6 hidden md:block border border-white/5 shadow-2x">
