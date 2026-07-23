@@ -14,7 +14,6 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
-import { compressImageFile } from '../lib/imageUtils';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -567,31 +566,6 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
       unsubscribeInquiries();
     };
   }, []);
-
-  // Image Upload Handlers for Admin Modals
-  const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const dataUrl = await compressImageFile(file, 1000, 0.8);
-      setProjectForm(prev => ({ ...prev, imageUrl: dataUrl }));
-    } catch (err) {
-      console.error("Error processing project image:", err);
-      alert("ছবি প্রসেসিং করতে সমস্যা হয়েছে।");
-    }
-  };
-
-  const handlePostImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const dataUrl = await compressImageFile(file, 1000, 0.8);
-      setProjectPostForm(prev => ({ ...prev, imageUrl: dataUrl }));
-    } catch (err) {
-      console.error("Error processing post image:", err);
-      alert("ছবি প্রসেসিং করতে সমস্যা হয়েছে।");
-    }
-  };
 
   // Handlers for Project CRUD
   const handleOpenProjectAdd = () => {
@@ -2122,26 +2096,15 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-accent flex items-center justify-between">
-                      <span>Project Image *</span>
-                      <label className="cursor-pointer text-[11px] text-accent font-bold hover:underline bg-accent/10 px-2 py-1 rounded-lg">
-                        📁 ডিভাইস থেকে ছবি আপলোড
-                        <input type="file" accept="image/*" onChange={handleProjectImageUpload} className="hidden" />
-                      </label>
-                    </label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Thumb Image URL *</label>
                     <input 
                       type="text"
                       required
                       value={projectForm.imageUrl}
                       onChange={(e) => setProjectForm({...projectForm, imageUrl: e.target.value})}
                       className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
-                      placeholder="Upload file above or paste image URL..."
+                      placeholder=""
                     />
-                    {projectForm.imageUrl && (
-                      <div className="h-20 w-full rounded-xl overflow-hidden border border-white/10 mt-1">
-                        <img src={projectForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                      </div>
-                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -2300,25 +2263,14 @@ I used "Glow Sheets" (blurred radial gradients) to create depth without using he
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-accent flex items-center justify-between">
-                      <span>Thumbnail Image</span>
-                      <label className="cursor-pointer text-[11px] text-accent font-bold hover:underline bg-accent/10 px-2 py-1 rounded-lg">
-                        📁 ডিভাইস থেকে ছবি আপলোড
-                        <input type="file" accept="image/*" onChange={handlePostImageUpload} className="hidden" />
-                      </label>
-                    </label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-accent">Thumbnail Image URL</label>
                     <input 
                       type="text"
                       value={postForm.imageUrl}
                       onChange={(e) => setProjectPostForm({...postForm, imageUrl: e.target.value})}
                       className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:border-accent outline-none transition-colors"
-                      placeholder="Upload file above or paste image URL..."
+                      placeholder=""
                     />
-                    {postForm.imageUrl && (
-                      <div className="h-20 w-full rounded-xl overflow-hidden border border-white/10 mt-1">
-                        <img src={postForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                      </div>
-                    )}
                   </div>
                 </div>
 

@@ -5,6 +5,7 @@ import App from './App';
 import './index.css';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { SkeletonProvider } from './components/Skeleton/SkeletonProvider';
 
 // Suppress and handle benign Vite/WebSocket connection rejections or errors
 if (typeof window !== 'undefined') {
@@ -40,7 +41,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <App />
+          <SkeletonProvider>
+            <App />
+          </SkeletonProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

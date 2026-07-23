@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Layout } from '../components/Layout';
 import { db } from '../lib/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { compressImageFile } from '../lib/imageUtils';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { 
   Mail, 
   MapPin, 
@@ -11,10 +10,7 @@ import {
   ArrowRight, 
   Calendar, 
   Sparkles, 
-  Briefcase,
-  Camera,
-  Upload,
-  Loader2
+  Briefcase 
 } from 'lucide-react';
 
 interface StatItem {
@@ -168,32 +164,6 @@ export const About = () => {
     return defaultData;
   });
   const [loading, setLoading] = useState(true);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploadingImage(true);
-      const dataUrl = await compressImageFile(file, 1200, 0.85);
-
-      await setDoc(doc(db, 'siteConfig', 'about'), { imageUrl: dataUrl }, { merge: true });
-      await setDoc(doc(db, 'siteConfig', 'hero'), { imageUrl: dataUrl }, { merge: true });
-
-      setAboutData((prev: any) => ({ ...prev, imageUrl: dataUrl }));
-      setHeroData((prev: any) => ({ ...(prev || {}), imageUrl: dataUrl }));
-
-      localStorage.setItem('siteConfig_about', JSON.stringify({ ...aboutData, imageUrl: dataUrl }));
-      localStorage.setItem('siteConfig_hero', JSON.stringify({ ...(heroData || {}), imageUrl: dataUrl }));
-    } catch (err) {
-      console.error("Failed to upload image:", err);
-      alert("ইমেজ আপলোড ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
-    } finally {
-      setUploadingImage(false);
-    }
-  };
 
   const [heroData, setHeroData] = useState<any>(() => {
     const cached = localStorage.getItem('siteConfig_hero');
@@ -302,52 +272,18 @@ export const About = () => {
           >
             <div className="absolute inset-0 bg-accent/5 rounded-[48px] blur-3xl opacity-30 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none" />
             
-            <div 
-              className="relative aspect-[4/5] rounded-[48px] overflow-hidden border border-border hover:border-accent/40 transition-all duration-700 shadow-[0_30px_100px_rgba(0,0,0,0.6)] cursor-pointer group/img"
-              onClick={() => fileInputRef.current?.click()}
-              title="ইমেজ আপলোড করতে ক্লিক করুন"
-            >
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*" 
-                onChange={handleImageFileChange} 
-              />
-
-              {(heroData?.imageUrl || aboutData?.imageUrl) ? (
+            <div className="relative aspect-[4/5] rounded-[48px] overflow-hidden border border-border hover:border-accent/40 transition-all duration-700 shadow-[0_30px_100px_rgba(0,0,0,0.6)]">
+              {(heroData?.imageUrl || aboutData?.imageUrl) && (
                 <img 
                   src={heroData?.imageUrl || aboutData?.imageUrl} 
                   alt="Portrait presentation" 
-                  className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/img:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                   referrerPolicy="no-referrer"
                   loading="eager"
                   decoding="async"
                 />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-black/50 text-slate-400 p-6 text-center">
-                  <Camera className="w-12 h-12 mb-3 text-accent animate-bounce" />
-                  <span className="text-sm font-bold uppercase tracking-wider text-white">ছবি আপলোড করুন</span>
-                  <span className="text-[11px] text-slate-400 mt-1">Select an image from device</span>
-                </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 pointer-events-none" />
-
-              {/* Upload Hover Overlay */}
-              <div className={`absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-white transition-opacity duration-300 ${uploadingImage ? 'opacity-100 pointer-events-auto' : 'opacity-0 group-hover/img:opacity-100'}`}>
-                {uploadingImage ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="w-8 h-8 text-accent animate-spin" />
-                    <span className="text-xs font-bold tracking-wider">আপলোড হচ্ছে...</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2 bg-navy/90 border border-white/20 px-5 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-transform">
-                    <Upload className="w-6 h-6 text-accent" />
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">নতুন ছবি আপলোড করুন</span>
-                    <span className="text-[10px] text-slate-300">ডিভাইস থেকে ফাইল সিলেক্ট করুন</span>
-                  </div>
-                )}
-              </div>
             </div>
             
             {/* Ambient Label badge */}
